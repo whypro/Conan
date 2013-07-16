@@ -1,0 +1,28 @@
+<link href="{{ url_for('static', filename='tablecloth/tablecloth.css') }}" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="{{ url_for('static', filename='tablecloth/tablecloth.js') }}"></script>
+<div id="container">
+<div id="content">
+<table>
+<tr>
+<th>番号</th>
+<th>中文名</th>
+<th>日文名</th>
+<th>评分</th>
+<th></th>
+</tr>
+{% for record in records %}
+<tr>
+<td>{{ record.number }}</td>
+<td>{{ record.cn_title }}</td>
+<td>{{ record.jp_title }}</td>
+<td>{{ record.rate }}</td>
+<td><a href="{{ url_for('.delete_record', number=record.number) }}">删除</a></td>
+</tr>
+{% endfor %}
+</table>
+<a href="{{ url_for('.add_record') }}">添加</a>
+</div>
+</div>
+
+
+
