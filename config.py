@@ -14,7 +14,7 @@ else:
     # 测试服务器配置
     # 数据库配置
     DB_HOST = 'localhost'
-    DB_DATABASE = 'book_manager'
+    DB_DATABASE = 'conan'
     DB_USERNAME = 'whypro'
     DB_PASSWORD = 'whypro'
     DB_PORT = 27017

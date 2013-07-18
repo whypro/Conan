@@ -13,9 +13,8 @@ from run import app
 # 显示所有
 @anime.route('/', methods=['GET'])
 def show_all():
-    client = MongoClient(app.config['DB_HOST'], app.config['DB_PORT'])
-    db = client[app.config['DB_DATABASE']]
-    cur = client.conan.tv.find().sort([('number', 1)])
+    db = connect_db()
+    cur = db.tv.find().sort([('number', 1)])
     print cur.count()
     return render_template('show.html', records=cur)
 
@@ -24,8 +23,7 @@ def show_all():
 def add_record(n):
     if request.method == 'POST':
         items = dict(request.form)
-        client = MongoClient(app.config['DB_HOST'], app.config['DB_PORT'])
-        db = client[app.config['DB_DATABASE']]
+        db = connect_db()
         # 循环获得记录信息
         for i in range(0, n):
             number = items['number'][i]
@@ -36,15 +34,19 @@ def add_record(n):
                 rate = items['rate'][i]
                 
                 data = {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate)}
-                cur = client.conan.tv.insert(data) 
+                cur = db.tv.insert(data) 
         return redirect(url_for('.show_all'))
     elif request.method == 'GET':
         return render_template('add.html', n=n)
 
 @anime.route('/delete/<id>/', methods=['GET'])
 def delete_record(id):
+    db = connect_db()
+    cur = db.tv.remove({'_id': ObjectId(id)})
+    return redirect(url_for('.show_all'))
+
+def connect_db():
     client = MongoClient(app.config['DB_HOST'], app.config['DB_PORT'])
     db = client[app.config['DB_DATABASE']]
-    cur = client.conan.tv.remove({'_id': ObjectId(id)})
-    return redirect(url_for('.show_all'))
-        
+    db.authenticate(app.config['DB_USERNAME'], app.config['DB_PASSWORD'])
+    return db

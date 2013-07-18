@@ -8,6 +8,11 @@ app = Flask(__name__)
 app.config.from_object('config')
 app.register_blueprint(anime, url_prefix='/anime')
 app.debug = True
+
+from flask import redirect
+@app.route('/')
+def index():
+    return redirect(url_for('anime.show_all'))
     
 if 'SERVER_SOFTWARE' in os.environ:
     from bae.core.wsgi import WSGIApplication
