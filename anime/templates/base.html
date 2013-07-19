@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}&nbsp;|&nbsp;鳗鱼电脑工作室</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+    
+    <link href="{{ url_for('static', filename='tablecloth/tablecloth.css') }}" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="{{ url_for('static', filename='tablecloth/tablecloth.js') }}"></script>
+    <script type="text/javascript">
+    function add() {
+        window.location.href="{{ url_for('.add_record') }}"
+    }
+    function show() {
+        window.location.href="{{ url_for('.show_all') }}"
+    }
+    </script>
+</head>
+<body>
+<div id="canvas">
+    <div id="header">
+        <h1><a href="{{ url_for('index') }}">鳗鱼电脑工作室</a></h1>
+        <div id="navigation">
+            <ul>
+            {#{% if session.logged_in %}
+            <em>欢迎，{{ session.username }}</em>&nbsp;|&nbsp;
+            {% endif %}#}
+            <li><a href="{{ url_for('.show_all') }}">首页</a></li>
+            {#
+            <li><a href="{{ url_for('show_service') }}">服务介绍</a></li>
+            <li><a href="{{ url_for('show_goods') }}">产品介绍</a></li>
+            {% if session.logged_in %}
+            <li><a href="{{ url_for('show_profile') }}">个人中心</a></li>
+            <li><a href="{{ url_for('logout') }}">注销</a></li>
+            {% else %}
+            <li><a href="{{ url_for('register') }}">注册</a></li>
+            <li><a href="{{ url_for('login') }}">登录</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('leave_message') }}">联系我们</a></li>
+            <li><a href="{{ url_for('show_join') }}">加入我们</a></li>#}
+            </ul>
+        </div>
+    </div>
+    <div id="main">
+        <div class="side-left">
+            <ul>
+                友情链接
+                <li><img src="http://img3.douban.com/pics/douban-icons/favicon_16x16.png" /><a href="http://www.douban.com/people/whypro/" target="_blank">豆瓣</a></li>
+                <li><img src="http://wiki.dev.renren.com/mediawiki/images/c/c4/%E5%B0%8F-16X16.png" /><a href="http://www.renren.com/248007007" target="_blank">人人网</a></li>
+                <li><img src="http://img.t.sinajs.cn/t4/style/images/staticlogo/download/Buttons/16x16/Weibo_Buttons_16x16_gold_back.png" /><a href="http://weibo.com/anchovit" target="_blank">新浪微博</a></li>
+                <li><img src="http://www.oschina.net/img/favicon.ico" style="width: 16px;" /><a href="http://my.oschina.net/apoptosis" target="_blank">开源中国社区</a></li>
+            </ul>
+            <ul>
+                加入我们
+                <li>跪求 CSS 布局高手</li>
+                <li>跪求 JS, AJAX 高手</li>
+                <li>跪求创意</li>
+            </ul>
+        </div>
+        {% block body %}{% endblock %}
+        <div class="clear"></div>
+    </div>
+    <div id="footer">
+        <div id="contact_us">
+            <p></p>
+        </div>
+        <div class="copyright">鳗鱼电脑工作室&nbsp;©&nbsp;2013, Powered by WHYPRO</div>
+    </div>
+</div>
+</body>
+</html>

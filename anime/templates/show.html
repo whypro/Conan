@@ -1,15 +1,17 @@
-<link href="{{ url_for('static', filename='tablecloth/tablecloth.css') }}" rel="stylesheet" type="text/css" media="screen" />
-<script type="text/javascript" src="{{ url_for('static', filename='tablecloth/tablecloth.js') }}"></script>
-<div id="container">
-    <div id="content">
+{% extends "base.html" %}
+{% block title %}名侦探柯南 TV + OVA 放映表{% endblock %}
+{% block body %}
+<div id="content">
+    <div class="post">
+        <h1>名侦探柯南 TV + OVA 放映表</h1>
         <table>
-            <tr>
+            <thead>
                 <th>番号</th>
                 <th>中文名</th>
                 <th>日文名</th>
                 <th>评分</th>
                 {% if False %}<th></th>{% endif %}
-            </tr>
+            </thead>
             {% for record in records %}
             <tr>
                 <td>{{ record.number }}</td>
@@ -22,9 +24,9 @@
             </tr>
             {% endfor %}
         </table>
-        <a href="{{ url_for('.add_record') }}">添加</a>
+        <input class="btn-submit" type="button" value="添加" onclick="add()" />
     </div>
 </div>
-
+{% endblock %}
 
 

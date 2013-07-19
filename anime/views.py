@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*- 
-from flask import render_template, request, redirect, url_for, g
-from urllib2 import urlopen, HTTPError
-from urllib import quote, urlencode
-import json
-import threading
+from flask import render_template, request, redirect, url_for
 from anime import anime
 from pymongo import MongoClient
 from bson.objectid import ObjectId
