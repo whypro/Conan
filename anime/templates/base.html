@@ -11,10 +11,10 @@
     <script type="text/javascript" src="{{ url_for('static', filename='tablecloth/tablecloth.js') }}"></script>
     <script type="text/javascript">
     function add() {
-        window.location.href="{{ url_for('.add_record') }}"
+        window.location.href="{{ url_for('anime.add_record') }}"
     }
     function show() {
-        window.location.href="{{ url_for('.show_all') }}"
+        window.location.href="{{ url_for('anime.show_all') }}"
     }
     </script>
 </head>
@@ -24,21 +24,23 @@
         <h1><a href="{{ url_for('index') }}">鳗鱼电脑工作室</a></h1>
         <div id="navigation">
             <ul>
-            {#{% if session.logged_in %}
-            <em>欢迎，{{ session.username }}</em>&nbsp;|&nbsp;
-            {% endif %}#}
-            <li><a href="{{ url_for('.show_all') }}">首页</a></li>
+            {% if g.user.is_authenticated() %}
+            <em>欢迎，{{ g.user.username }}</em>&emsp;|&emsp;
+            {% else %}
+            <em>欢迎，游客</em>&emsp;|&emsp;
+            {% endif %}
+            <li><a href="{{ url_for('anime.show_all') }}">首页</a></li>
             {#
             <li><a href="{{ url_for('show_service') }}">服务介绍</a></li>
-            <li><a href="{{ url_for('show_goods') }}">产品介绍</a></li>
-            {% if session.logged_in %}
-            <li><a href="{{ url_for('show_profile') }}">个人中心</a></li>
+            <li><a href="{{ url_for('show_goods') }}">产品介绍</a></li>#}
+            {% if g.user.is_authenticated() %}
+            {#<li><a href="{{ url_for('show_profile') }}">个人中心</a></li>#}
             <li><a href="{{ url_for('logout') }}">注销</a></li>
             {% else %}
-            <li><a href="{{ url_for('register') }}">注册</a></li>
+            {#<li><a href="{{ url_for('register') }}">注册</a></li>#}
             <li><a href="{{ url_for('login') }}">登录</a></li>
             {% endif %}
-            <li><a href="{{ url_for('leave_message') }}">联系我们</a></li>
+            {#<li><a href="{{ url_for('leave_message') }}">联系我们</a></li>
             <li><a href="{{ url_for('show_join') }}">加入我们</a></li>#}
             </ul>
         </div>

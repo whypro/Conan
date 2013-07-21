@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*- 
 from flask import render_template, request, redirect, url_for
 from anime import anime
-from pymongo import MongoClient
 from bson.objectid import ObjectId
-from pymongo.son_manipulator import AutoReference, NamespaceInjector
-from run import app
+from flask.ext.login import login_required
+from database import connect_db
 
 # 显示所有
 @anime.route('/', methods=['GET'])
+@login_required
 def show_all():
     db = connect_db()
     cur = db.tv.find().sort([('number', 1)])
@@ -41,8 +41,3 @@ def delete_record(id):
     cur = db.tv.remove({'_id': ObjectId(id)})
     return redirect(url_for('.show_all'))
 
-def connect_db():
-    client = MongoClient(app.config['DB_HOST'], app.config['DB_PORT'])
-    db = client[app.config['DB_DATABASE']]
-    db.authenticate(app.config['DB_USERNAME'], app.config['DB_PASSWORD'])
-    return db
