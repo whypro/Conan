@@ -34,6 +34,8 @@ def configure_views(app):
     # 登录页面
     @app.route('/login/', methods=['GET', 'POST'])
     def login():
+        if g.user.is_authenticated():
+            return redirect(url_for('index'))
         error = None
         if request.method == 'POST':
             if not request.form['username']:
@@ -49,8 +51,7 @@ def configure_views(app):
                     flash(u'登陆成功，3 秒钟内将返回首页……')
                     print current_user
                     return render_template('flash.html', target=url_for('index'))
-        elif request.method == 'GET':
-            return render_template('login.html', error=error)
+        return render_template('login.html', error=error)
     
     # 注销
     @app.route('/logout/', methods=['GET'])

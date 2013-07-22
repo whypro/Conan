@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}编辑条目{% endblock %}
+{% block body %}
+<div id="content">
+    <div class="post">
+        <h1>编辑条目</h1>
+        <form method="post">
+            <table>
+                <thead>
+                    <th>番号</th>
+                    <th>中文名</th>
+                    <th>日文名</th>
+                    <th>评分</th>
+                </thead>
+                <tr>
+                    <td><input class="basic-input" name="number" value="{{ record.number }}" /></td>
+                    <td><input class="basic-input" name="cn_title" value="{{ record.cn_title }}" /></td>
+                    <td><input class="basic-input" name="jp_title" value="{{ record.jp_title }}" /></td>
+                    <td>
+                    <select class="select-input" name="rate">
+                        <option value=""></option>
+                        <option value="5" {% if record.rate == 5 %}selected{% endif %}>5</option>
+                        <option value="4" {% if record.rate == 4 %}selected{% endif %}>4</option>
+                        <option value="3" {% if record.rate == 3 %}selected{% endif %}>3</option>
+                        <option value="2" {% if record.rate == 2 %}selected{% endif %}>2</option>
+                        <option value="1" {% if record.rate == 1 %}selected{% endif %}>1</option>
+                    </select>
+                    </td>  
+                </tr>
+            </table>
+            <input class="btn-submit" type="submit" value="保存" />
+            <span>&emsp;&emsp;</span>
+            <input class="btn-submit" type="button" value="返回" onclick="show()" />
+        </form>
+    </div>
+</div>
+{% endblock %}
+

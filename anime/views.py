@@ -7,7 +7,6 @@ from database import connect_db
 
 # 显示所有
 @anime.route('/', methods=['GET'])
-@login_required
 def show_all():
     db = connect_db()
     cur = db.tv.find().sort([('number', 1)])
@@ -35,9 +34,31 @@ def add_record(n):
     elif request.method == 'GET':
         return render_template('add.html', n=n)
 
+
+@anime.route('/modify/<id>/', methods=['GET', 'POST'])
+@login_required
+def modify_record(id):
+    if request.method == 'POST':
+        number = request.form['number']
+        # 如果 number 非空，插入记录
+        if number.isdigit():
+            cn_title = request.form['cn_title']
+            jp_title = request.form['jp_title']
+            rate = request.form['rate']
+
+            db = connect_db()
+            cur = db.tv.update({'_id': ObjectId(id)}, {'$set': {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate)}})
+        return redirect(url_for('.show_all'))
+        
+    elif request.method == 'GET':
+        db = connect_db()
+        cur = db.tv.find_one({'_id': ObjectId(id)})
+        return render_template('modify.html', record=cur)
+        
+
 @anime.route('/delete/<id>/', methods=['GET'])
+@login_required
 def delete_record(id):
     db = connect_db()
     cur = db.tv.remove({'_id': ObjectId(id)})
     return redirect(url_for('.show_all'))
-

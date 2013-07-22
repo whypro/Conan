@@ -17,7 +17,16 @@
                     <td><input class="basic-input" name="number" /></td>
                     <td><input class="basic-input" name="cn_title" /></td>
                     <td><input class="basic-input" name="jp_title" /></td>
-                    <td><input class="basic-input" name="rate" /></td>
+                    <td>
+                    <select class="select-input" name="rate">
+                        <option value=""></option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="1">1</option>
+                    </select>
+                    </td>  
                 </tr>
                 {% endfor %}
             </table>
