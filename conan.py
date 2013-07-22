@@ -7,6 +7,7 @@ from bson.objectid import ObjectId
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 from models import User
 from database import connect_db
+import hashlib
 
 # 应用程序工厂函数
 def create_app(config):
@@ -42,7 +43,8 @@ def configure_views(app):
                 error = u'用户名不能为空'
             else:
                 db = connect_db()
-                cur = db.user.find_one({'username': request.form['username'], 'password': request.form['password']})
+                encrypted_password = hashlib.new('md5', request.form['password']).hexdigest()
+                cur = db.user.find_one({'username': request.form['username'], 'password': encrypted_password})
                 if not cur:
                     error = u'用户名或密码不正确'
                 else:
