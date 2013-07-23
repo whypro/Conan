@@ -49,9 +49,8 @@ def configure_views(app):
                     error = u'用户名或密码不正确'
                 else:
                     user = User(cur)
-                    login_user(user)
+                    login_user(user, remember=('remember' in request.form))
                     flash(u'登陆成功，3 秒钟内将返回首页……')
-                    print current_user
                     return render_template('flash.html', target=url_for('index'))
         return render_template('login.html', error=error)
     

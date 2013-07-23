@@ -241,7 +241,7 @@ label {
 .basic-input {
     font-family: "Microsoft YaHei";
     font-size: 11pt;
-    width: 200px;
+    width: 160px;
     padding: 5px;
     height: 18px;
     -moz-border-radius: 3px;
@@ -253,7 +253,7 @@ label {
 .select-input {
     font-family: "Microsoft YaHei";
     font-size: 11pt;
-    width: 200px;
+    width: 160px;
     /*padding: 5px;*/
     height: 30px;
     -moz-border-radius: 3px;

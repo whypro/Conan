@@ -4,6 +4,7 @@ from anime import anime
 from bson.objectid import ObjectId
 from flask.ext.login import login_required
 from database import connect_db
+import datetime
 
 # 显示所有
 @anime.route('/', methods=['GET'])
@@ -15,6 +16,7 @@ def show_all():
 
 @anime.route('/add/', defaults={'n': 5}, methods=['GET', 'POST'])
 @anime.route('/add/<int:n>/', methods=['GET', 'POST'])
+@login_required
 def add_record(n):
     if request.method == 'POST':
         items = dict(request.form)
@@ -27,13 +29,20 @@ def add_record(n):
                 cn_title = items['cn_title'][i]
                 jp_title = items['jp_title'][i]
                 rate = items['rate'][i]
+                date_str = items['date'][i]
                 
-                data = {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate)}
+                data = {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate), 'date': str_to_datetime(date_str)}
                 cur = db.tv.insert(data) 
         return redirect(url_for('.show_all'))
     elif request.method == 'GET':
         return render_template('add.html', n=n)
 
+def str_to_datetime(date_str):
+    try:
+        datetime_obj = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+    except:
+        datetime_obj = None
+    return datetime_obj
 
 @anime.route('/modify/<id>/', methods=['GET', 'POST'])
 @login_required
@@ -45,9 +54,9 @@ def modify_record(id):
             cn_title = request.form['cn_title']
             jp_title = request.form['jp_title']
             rate = request.form['rate']
-
+            date_str = request.form['date']
             db = connect_db()
-            cur = db.tv.update({'_id': ObjectId(id)}, {'$set': {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate)}})
+            cur = db.tv.update({'_id': ObjectId(id)}, {'$set': {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate), 'date': str_to_datetime(date_str)}})
         return redirect(url_for('.show_all'))
         
     elif request.method == 'GET':
