@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, g, flash, redirect, url_for
-import os
+from flask import Flask, g, flash, redirect, url_for, session
+from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
+
+import os, hashlib, StringIO
+from bson.objectid import ObjectId
+
 from anime import anime
 from anime.views import *
-from bson.objectid import ObjectId
-from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
+
 from models import User
 from database import connect_db
-import hashlib
+from captcha import create_captcha
+
 
 # 应用程序工厂函数
 def create_app(config):
@@ -62,6 +66,50 @@ def configure_views(app):
         flash(u'已注销，3 秒钟内将返回首页……')
         return render_template('flash.html', target=url_for('index'))
 
+    # 注册页面
+    @app.route('/register/', methods=['GET', 'POST'])
+    def register():
+        # 已登录用户则返回首页
+        if g.user.is_authenticated():
+            return redirect(url_for('index'))
+        error = None
+        if request.method == 'POST':
+            if not request.form['username']:
+                error = u'用户名不能为空'
+            elif not request.form['password']:
+                error = u'密码不能为空'
+            elif request.form['captcha'].upper() != session['captcha'].upper():
+                error = u'验证码不正确'
+            else:
+                # 判断用户是否存在
+                db = connect_db()
+                cur = db.user.find_one({'username': request.form['username']})
+                if not cur:
+                    # 将用户写入数据库
+                    db.user.insert({
+                        'username': request.form['username'],
+                        'password': hashlib.new('md5', request.form['password']).hexdigest(),
+                        'email': request.form['email']
+                    })
+                    flash(u'注册成功，3 秒钟内将转到登陆页面……')
+                    return render_template('flash.html', target=url_for('login'))
+                else:
+                    error = u'用户名已存在'
+        return render_template('register.html', error=error)
+    
+    # 获取验证码
+    @app.route('/captcha/')
+    def get_captcha():
+        #把strs发给前端,或者在后台使用session保存
+        code_img, strs = create_captcha(size=(100, 24), img_type="PNG")
+        buf = StringIO.StringIO()
+        code_img.save(buf,'PNG')
+
+        buf_str = buf.getvalue()
+        session['captcha'] = strs
+        response = app.make_response(buf_str)
+        response.headers['Content-Type'] = 'image/png'
+        return response
         
 def configure_blueprints(app):
     from anime import anime
@@ -88,4 +136,3 @@ def config_before_request(app):
     def before_request():
         g.user = current_user
 
-    

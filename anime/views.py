@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*- 
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, abort
 from anime import anime
 from bson.objectid import ObjectId
 from flask.ext.login import login_required
@@ -10,9 +10,9 @@ import datetime
 @anime.route('/', methods=['GET'])
 def show_all():
     db = connect_db()
-    cur = db.tv.find().sort([('number', 1)])
-    print cur.count()
-    return render_template('show.html', records=cur)
+    tv_records = db.tv.find().sort([('number', 1)])
+    ova_records = db.ova.find().sort([('number', 1)])
+    return render_template('show.html', tv_records=tv_records, ova_records=ova_records)
 
 @anime.route('/add/', defaults={'n': 5}, methods=['GET', 'POST'])
 @anime.route('/add/<int:n>/', methods=['GET', 'POST'])
@@ -30,9 +30,16 @@ def add_record(n):
                 jp_title = items['jp_title'][i]
                 rate = items['rate'][i]
                 date_str = items['date'][i]
+                category = items['category'][i]
                 
-                data = {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate), 'date': str_to_datetime(date_str)}
-                cur = db.tv.insert(data) 
+                data = {
+                    'number': int(number), 
+                    'cn_title': cn_title, 
+                    'jp_title': jp_title, 
+                    'rate': None if not rate.isdigit() else int(rate), 
+                    'date': str_to_datetime(date_str)
+                }
+                cur = db[category.lower()].insert(data)
         return redirect(url_for('.show_all'))
     elif request.method == 'GET':
         return render_template('add.html', n=n)
@@ -44,9 +51,9 @@ def str_to_datetime(date_str):
         datetime_obj = None
     return datetime_obj
 
-@anime.route('/modify/<id>/', methods=['GET', 'POST'])
+@anime.route('/modify/<category>/<id>/', methods=['GET', 'POST'])
 @login_required
-def modify_record(id):
+def modify_record(category, id):
     if request.method == 'POST':
         number = request.form['number']
         # 如果 number 非空，插入记录
@@ -56,18 +63,21 @@ def modify_record(id):
             rate = request.form['rate']
             date_str = request.form['date']
             db = connect_db()
-            cur = db.tv.update({'_id': ObjectId(id)}, {'$set': {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate), 'date': str_to_datetime(date_str)}})
+            cur = db[category.lower()].update({'_id': ObjectId(id)}, {'$set': {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate), 'date': str_to_datetime(date_str)}})
         return redirect(url_for('.show_all'))
         
     elif request.method == 'GET':
         db = connect_db()
-        cur = db.tv.find_one({'_id': ObjectId(id)})
-        return render_template('modify.html', record=cur)
+        cur = db[category.lower()].find_one({'_id': ObjectId(id)})
+        if not cur:
+            abort(404)
+        else:
+            return render_template('modify.html', record=cur)
         
 
-@anime.route('/delete/<id>/', methods=['GET'])
+@anime.route('/delete/<category>/<id>/', methods=['GET'])
 @login_required
-def delete_record(id):
+def delete_record(category, id):
     db = connect_db()
-    cur = db.tv.remove({'_id': ObjectId(id)})
+    cur = db[category.lower()].remove({'_id': ObjectId(id)})
     return redirect(url_for('.show_all'))

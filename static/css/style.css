@@ -137,9 +137,15 @@ a {
     text-align: center;
 }
 
-#content .post h2 {
+#content .post h1 {
     font-family: "Microsoft YaHei";
     font-size: 16pt;
+    font-weight: bold;
+}
+
+#content .post h2 {
+    font-family: "Microsoft YaHei";
+    font-size: 15pt;
     font-weight: bold;
 }
 
@@ -253,7 +259,7 @@ label {
 .select-input {
     font-family: "Microsoft YaHei";
     font-size: 11pt;
-    width: 160px;
+    width: 100px;
     /*padding: 5px;*/
     height: 30px;
     -moz-border-radius: 3px;

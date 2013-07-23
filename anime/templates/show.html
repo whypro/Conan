@@ -5,6 +5,7 @@
     <div class="post">
         <h1>名侦探柯南 TV + OVA 放映表</h1>
         <table>
+            <caption>名侦探柯南 TV 放映表</caption>
             <thead>
                 <th>番号</th>
                 <th>中文名</th>
@@ -13,7 +14,7 @@
                 <th>评分</th>
                 {% if g.user.is_authenticated() %}<th></th>{% endif %}
             </thead>
-            {% for record in records %}
+            {% for record in tv_records %}
             <tr>
                 <td>{{ record.number }}</td>
                 <td>{{ record.cn_title }}</td>
@@ -23,11 +24,38 @@
                 <td style="{% if record.rate < 2 %}color: #712704{% elif record.rate < 3 %}color: #bd7803;{% elif record.rate < 4 %}color: #fe9d01;{% elif record.rate < 5 %}color: #ffbb1c;{% else %}color: #eed205;{% endif %}">{{ '★'*record.rate }}</td>
                 {% else %}<td>N/A</td>{% endif %}
                 {% if g.user.is_authenticated() %}
-                <td><span><a href="{{ url_for('.modify_record', id=record._id) }}">修改</a></span><span><a href="{{ url_for('.delete_record', id=record._id) }}">删除</a></span></td>
+                <td><span><a href="{{ url_for('.modify_record', category='TV', id=record._id) }}">修改</a></span><span><a href="{{ url_for('.delete_record', category='TV', id=record._id) }}">删除</a></span></td>
                 {% endif %}
             </tr>
             {% endfor %}
         </table>
+        
+        <table>
+            <caption>名侦探柯南 OVA 放映表</caption>
+            <thead>
+                <th>序号</th>
+                <th>中文名</th>
+                <th>日文名</th>
+                <th>上映日期</th>
+                <th>评分</th>
+                {% if g.user.is_authenticated() %}<th></th>{% endif %}
+            </thead>
+            {% for record in ova_records %}
+            <tr>
+                <td>{{ record.number }}</td>
+                <td>{{ record.cn_title }}</td>
+                <td>{{ record.jp_title }}</td>
+                <td>{% if record.date %}{{ record.date.date() }}{% else %}N/A{% endif %}</td>
+                {% if record.rate %}
+                <td style="{% if record.rate < 2 %}color: #712704{% elif record.rate < 3 %}color: #bd7803;{% elif record.rate < 4 %}color: #fe9d01;{% elif record.rate < 5 %}color: #ffbb1c;{% else %}color: #eed205;{% endif %}">{{ '★'*record.rate }}</td>
+                {% else %}<td>N/A</td>{% endif %}
+                {% if g.user.is_authenticated() %}
+                <td><span><a href="{{ url_for('.modify_record', category='OVA', id=record._id) }}">修改</a></span><span><a href="{{ url_for('.delete_record', category='OVA', id=record._id) }}">删除</a></span></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+        
         {% if g.user.is_authenticated() %}
         <input class="btn-submit" type="button" value="添加" onclick="add()" />
         {% endif %}
