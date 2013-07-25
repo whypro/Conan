@@ -8,12 +8,21 @@ import datetime
 
 # 显示所有
 @anime.route('/', methods=['GET'])
-def show_all():
+def index():
+    return render_template('index.html')
+
+@anime.route('/tv/', methods=['GET'])
+def show_tv():
     db = connect_db()
     tv_records = db.tv.find().sort([('number', 1)])
+    return render_template('show.html', records=tv_records, category='tv')
+    
+@anime.route('/ova/', methods=['GET'])
+def show_ova():
+    db = connect_db()
     ova_records = db.ova.find().sort([('number', 1)])
-    return render_template('show.html', tv_records=tv_records, ova_records=ova_records)
-
+    return render_template('show.html', records=ova_records, category='ova')
+    
 @anime.route('/add/', defaults={'n': 5}, methods=['GET', 'POST'])
 @anime.route('/add/<int:n>/', methods=['GET', 'POST'])
 @login_required
@@ -40,7 +49,7 @@ def add_record(n):
                     'date': str_to_datetime(date_str)
                 }
                 cur = db[category.lower()].insert(data)
-        return redirect(url_for('.show_all'))
+        return redirect(url_for('.index'))
     elif request.method == 'GET':
         return render_template('add.html', n=n)
 
@@ -64,7 +73,7 @@ def modify_record(category, id):
             date_str = request.form['date']
             db = connect_db()
             cur = db[category.lower()].update({'_id': ObjectId(id)}, {'$set': {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate), 'date': str_to_datetime(date_str)}})
-        return redirect(url_for('.show_all'))
+        return redirect(url_for('.index'))
         
     elif request.method == 'GET':
         db = connect_db()
@@ -80,4 +89,4 @@ def modify_record(category, id):
 def delete_record(category, id):
     db = connect_db()
     cur = db[category.lower()].remove({'_id': ObjectId(id)})
-    return redirect(url_for('.show_all'))
+    return redirect(url_for('.index'))

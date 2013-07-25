@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}编辑条目{% endblock %}
+{% block body %}
+<div id="content">
+    <div class="post">
+        <ul>
+            <li><a href="{{ url_for('anime.show_tv') }}">名侦探柯南 TV 放映表</a></li>
+            <li><a href="{{ url_for('anime.show_ova') }}">名侦探柯南 OVA 放映表</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

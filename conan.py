@@ -34,7 +34,7 @@ def configure_app(app, config):
 def configure_views(app):
     @app.route('/')
     def index():
-        return redirect(url_for('anime.show_all'))
+        return redirect(url_for('anime.index'))
 
     # 登录页面
     @app.route('/login/', methods=['GET', 'POST'])
