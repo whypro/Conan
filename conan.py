@@ -7,6 +7,8 @@ from bson.objectid import ObjectId
 
 from anime import anime
 from anime.views import *
+from admin import admin
+from admin.views import *
 
 from models import User
 from database import connect_db
@@ -114,6 +116,8 @@ def configure_views(app):
 def configure_blueprints(app):
     from anime import anime
     app.register_blueprint(anime, url_prefix='/anime')
+    from admin import admin
+    app.register_blueprint(admin, url_prefix='/admin')
 
 def configure_flasklogin(app):
     login_manager = LoginManager()

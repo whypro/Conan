@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}恢复数据库{% endblock %}
+{% block body %}
+<div id="content">
+    <div class="post">
+        <h1>恢复数据库</h1>
+        <p>
+        点击【恢复】按钮以将数据库中的数据备份至文件
+        </p>
+        <form method="post">
+            <input class="btn-submit" type="submit" value="恢复" />
+            <span>&emsp;&emsp;</span>
+            <input class="btn-submit" type="button" value="返回" onclick="show()" />
+        </form>
+    </div>
+</div>
+{% endblock %}
+

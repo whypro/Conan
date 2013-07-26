@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% block body %}
+<div id="content">
+    <div class="post">
+        <ul>
+            <li><a href="{{ url_for('admin.backup') }}">数据库备份</a></li>
+            <li><a href="{{ url_for('admin.restore') }}">数据库恢复</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

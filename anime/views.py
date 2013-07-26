@@ -9,7 +9,7 @@ import datetime
 # 显示所有
 @anime.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    return render_template('anime_index.html')
 
 @anime.route('/tv/', methods=['GET'])
 def show_tv():
