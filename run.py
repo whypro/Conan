@@ -10,7 +10,7 @@ app = create_app('config')
 if 'SERVER_SOFTWARE' in os.environ:
     from bae.core.wsgi import WSGIApplication
     application = WSGIApplication(app)
-
 elif __name__ == '__main__':
-    app.run()
-    
+    from werkzeug.serving import run_simple
+    run_simple('localhost', 5000, app,
+               use_reloader=True, use_debugger=True, use_evalex=True)

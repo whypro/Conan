@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*- 
-from flask import render_template, request, redirect, url_for, abort
+from flask import render_template, request, redirect, url_for, abort, g, flash
 from anime import anime
 from bson.objectid import ObjectId
 from flask.ext.login import login_required
@@ -64,17 +64,20 @@ def str_to_datetime(date_str):
 @login_required
 def modify_record(category, id):
     if request.method == 'POST':
-        number = request.form['number']
-        # 如果 number 非空，插入记录
-        if number.isdigit():
-            cn_title = request.form['cn_title']
-            jp_title = request.form['jp_title']
-            rate = request.form['rate']
-            date_str = request.form['date']
-            db = connect_db()
-            cur = db[category.lower()].update({'_id': ObjectId(id)}, {'$set': {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate), 'date': str_to_datetime(date_str)}})
-        return redirect(url_for('.index'))
-        
+        if not g.user.is_admin():
+            flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+            return render_template('flash.html', target=url_for('anime.index'))
+        else:
+            number = request.form['number']
+            # 如果 number 非空，插入记录
+            if number.isdigit():
+                cn_title = request.form['cn_title']
+                jp_title = request.form['jp_title']
+                rate = request.form['rate']
+                date_str = request.form['date']
+                db = connect_db()
+                cur = db[category.lower()].update({'_id': ObjectId(id)}, {'$set': {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate), 'date': str_to_datetime(date_str)}})
+            return redirect(url_for('.index'))
     elif request.method == 'GET':
         db = connect_db()
         cur = db[category.lower()].find_one({'_id': ObjectId(id)})
@@ -87,6 +90,10 @@ def modify_record(category, id):
 @anime.route('/delete/<category>/<id>/', methods=['GET'])
 @login_required
 def delete_record(category, id):
-    db = connect_db()
-    cur = db[category.lower()].remove({'_id': ObjectId(id)})
-    return redirect(url_for('.index'))
+    if not g.user.is_admin():
+        flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+        return render_template('flash.html', target=url_for('anime.index'))
+    else:
+        db = connect_db()
+        cur = db[category.lower()].remove({'_id': ObjectId(id)})
+        return redirect(url_for('.index'))

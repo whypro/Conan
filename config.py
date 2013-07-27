@@ -10,6 +10,7 @@ if 'SERVER_SOFTWARE' in os.environ:
     DB_USERNAME = const.MONGO_USER
     DB_PASSWORD = const.MONGO_PASS
     DB_PORT = int(const.MONGO_PORT)
+    TEMP_DIR = const.APP_TMPDIR
 else:
     # 测试服务器配置
     # 数据库配置
@@ -18,3 +19,4 @@ else:
     DB_USERNAME = 'whypro'
     DB_PASSWORD = 'whypro'
     DB_PORT = 27017
+    TEMP_DIR = 'temp'
