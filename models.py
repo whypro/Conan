@@ -2,8 +2,14 @@ class User(object):
     def __init__(self, cursor):
         self._id = cursor['_id']
         self.username = cursor['username']
-        self.password = cursor['password']
-        
+        # self.password = cursor['password']
+        # self.email = cursor.get('email', None)
+        # self.date = cursor.get('date', None)
+        # self.ip = cursor.get('ip', None)
+        self.group = cursor.get('group', None)
+    
+    def is_admin(self):
+        return self.group == 'admin'
         
     def is_authenticated(self):
         return True

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}用户管理{% endblock %}
+{% block body %}
+<div id="content">
+    <div class="post">
+        <h1>用户管理</h1>
+        {% if users.count() %}
+        <table>
+            <thead>
+                <th>用户名</th>
+                <th>密码</th>
+                <th>电子邮箱</th>
+                <th>注册日期</th>
+                <th>注册 IP</th>
+                <th>组</th>
+                {% if g.user.is_authenticated() %}<th></th>{% endif %}
+            </thead>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.password }}</td>
+                <td>{{ user.email }}</td>
+                <td>{% if user.date %}{{ user.date.date() }}{% else %}N/A{% endif %}</td>
+                <td>{{ user.ip }}</td>
+                <td>{{ user.group }}</td>
+                
+                {% if g.user.is_authenticated() %}
+                <td>{#<span><a href="{{ url_for('admin.modify_user', id=user._id) }}">修改</a></span>#}<span><a href="{{ url_for('admin.delete_user', id=user._id) }}">删除</a></span></td>
+                {% endif %}
+                
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        {#
+        {% if g.user.is_authenticated() %}
+        <input class="btn-submit" type="button" value="添加" onclick="add()" />
+        {% endif %}
+        #}
+    </div>
+</div>
+{% endblock %}
+
+

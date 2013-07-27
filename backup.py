@@ -54,3 +54,58 @@ def restore_db(db_name):
 if __name__ == '__main__':
     backup()
     restore()
+    
+    
+# import time
+# import os
+# from bae.core import const
+# from bae.api import bcs
+
+# HOST = const.BCS_ADDR
+# AK = const.ACCESS_KEY
+# SK = const.SECRET_KEY
+# NAME = 'whypro'
+# def test_bcs():
+    # # 创建BCS管理对象
+    # baebcs = bcs.BaeBCS(HOST, AK, SK)
+
+    # # 读取一个测试文件的内容
+    # filename = os.path.dirname(__file__) + "/favicon.ico"
+    # with open(filename) as fd:
+        # data = fd.read()
+
+    # ### 将文件内容上传到 '/obj1' 下
+    # o1 = '/upload/201303/obj1'
+    # e, d = baebcs.put_object(bname, o1, data)
+    # assert e == 0
+
+    # ### 上传文件有一定的延迟
+    # time.sleep(1)
+
+    # ### 从 '/obj1' 获取数据
+    # e, d = baebcs.get_object(bname, o1)
+    # assert e == 0
+    # assert d == data
+
+    # ### 也可以直接上传文件
+    # o2 = '/obj2'
+    # e, d = baebcs.put_file(bname, o2, filename)
+
+    # ### 将object内容保存到临时目录下
+    # tmpdir = (const.APP_TMPDIR if const.APP_TMPDIR else "/tmp")
+    # filename2 = tmpdir + "/favicon.ico"
+    # e, d = baebcs.get_to_file(bname, o2, filename2)
+    # assert e == 0
+
+    # ### 列出所有的object
+    # e, d = baebcs.list_objects(bname)
+    # assert e == 0
+    
+    
+    
+    
+    
+    
+    
+    
+    

@@ -85,18 +85,25 @@ def configure_views(app):
             else:
                 # 判断用户是否存在
                 db = connect_db()
-                cur = db.user.find_one({'username': request.form['username']})
-                if not cur:
+                username_conflict = db.user.find_one({'username': request.form['username']})
+                email_conflict = db.user.find_one({'email': request.form['email']})
+                if username_conflict:
+                    error = u'用户名已存在'
+                elif email_conflict:
+                    error = u'邮箱已存在'
+                else:
                     # 将用户写入数据库
                     db.user.insert({
                         'username': request.form['username'],
                         'password': hashlib.new('md5', request.form['password']).hexdigest(),
-                        'email': request.form['email']
+                        'email': request.form['email'], 
+                        'date': datetime.datetime.now(),
+                        'ip': request.remote_addr,
+                        'group': 'guest'
                     })
                     flash(u'注册成功，3 秒钟内将转到登陆页面……')
                     return render_template('flash.html', target=url_for('login'))
-                else:
-                    error = u'用户名已存在'
+                    
         return render_template('register.html', error=error)
     
     # 获取验证码
