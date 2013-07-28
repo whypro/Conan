@@ -141,7 +141,7 @@ def configure_views(app):
                 total_messages = db.message.count()
                 total_pages = int(ceil(total_messages / messages_per_page)) # from __future__ import division
                 
-                messages = db.message.find().skip(offset).limit(messages_per_page)
+                messages = db.message.find().sort([('date', -1)]).skip(offset).limit(messages_per_page)
 
                 if page != 1 and not messages.count():
                     abort(404)
@@ -172,10 +172,10 @@ def configure_views(app):
 
                 db = connect_db()
                 # dbref
-                db.message.insert({'uid': id, 'name': request.form['name'], 'email': request.form['email'], 'content': request.form['content'], 'ip': request.remote_addr})
+                db.message.insert({'uid': id, 'name': request.form['name'], 'email': request.form['email'], 'content': request.form['content'], 'date': datetime.datetime.now(), 'ip': request.remote_addr})
                 
-                flash(u'留言成功，3 秒钟内将返回首页……')
-                return render_template('flash.html', target=url_for('index'))
+                flash(u'留言成功，3 秒钟内将返回留言页面……')
+                return render_template('flash.html', target=url_for('show_message'))
         return render_template('contact.html', error=error)
         
     @app.route('/guestbook/delete/<id>/', methods=['GET'])
@@ -221,7 +221,10 @@ def configure_views(app):
                     
         return render_template('profile.html', error=error, avatar_url=avatar_url)
 
-      
+    @app.route('/about/', methods=['GET'])
+    def show_about():
+        return render_template('about.html')
+        
 def configure_blueprints(app):
     from anime import anime
     app.register_blueprint(anime, url_prefix='/anime')
