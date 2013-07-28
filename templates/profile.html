@@ -4,21 +4,28 @@
     <div id="content">
         <div class="input-form">
             <form method="post">
+                {% if error %}
+                <div class="error">错误：{{ error }}</div>
+                {% endif %}
                 <div class="item">
                     <label>头像</label>
                     <img class="avatar-img" src="{{ avatar_url }}" alt="头像加载中……" />
                 </div>
                 <div class="item">
                     <label>用户名</label>
-                    <input class="basic-input" type="text" name="username" readonly value="{{ user.username }}" />
+                    <input class="basic-input" type="text" name="username" readonly value="{{ g.user.get_username() }}" />
+                </div>
+                <div class="item">
+                    <label>密码</label>
+                    <input class="basic-input" type="password" name="password" placeholder="无需修改密码请留空" />
                 </div>
                 <div class="item">
                     <label>电子邮箱</label>
-                    <input class="basic-input" type="email" name="email" value="{{ user.email }}"/>
+                    <input class="basic-input" type="email" name="email" value="{{ g.user.get_email() }}"/>
                 </div>
                 <div class="item">
                     <label>注册日期</label>
-                    <input class="basic-input" type="text" name="rtime" readonly value="{{ user.reg_time }}" />
+                    <input class="basic-input" type="text" name="rtime" readonly value="{{ g.user.get_date().date() if g.user.get_date() else '' }}" />
                 </div>
                 <div class="item-submit">
                     <label>&nbsp;</label>

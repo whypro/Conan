@@ -4,7 +4,7 @@ class User(object):
         self.username = cursor['username']
         # self.password = cursor['password']
         self.email = cursor.get('email', None)
-        # self.date = cursor.get('date', None)
+        self.date = cursor.get('date', None)
         # self.ip = cursor.get('ip', None)
         self.group = cursor.get('group', None)
     
@@ -28,6 +28,9 @@ class User(object):
         
     def get_email(self):
         return self.email
+    
+    def get_date(self):
+        return self.date
         
     def __repr__(self):
         return '<User %r>' % (self.username)

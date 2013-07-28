@@ -196,19 +196,30 @@ def configure_views(app):
     @app.route('/profile/', methods=['GET', 'POST'])
     @login_required
     def show_profile():
-        db = connect_db()
-        id = g.user.get_id()
+        error = None
+        # user = db.user.find_one({'_id': ObjectId(id)}, {'username': 1, 'email': 1, 'date': 1})
+        user = g.user
+        id = user.get_id()
+        avatar_url = get_avatar(user.get_email(), 170)
         if request.method == 'POST':
-            # TODO: Email 重复验证！
-            db.user.update({'_id': ObjectId(id)}, {'$set': {'email': request.form['email']}})
-            flash(u'更改成功，3 秒钟内将转到个人页面……')
-            return render_template('flash.html', target=url_for('show_profile'))
-        else:
-            avatar_url = ''
-            user = db.user.find_one({'_id': ObjectId(id)}, {'username': 1, 'email': 1, 'reg_time': 1})
-            print str(user)
-            avatar_url = get_avatar(user.get('email', ""), 170)
-            return render_template('profile.html', user=user, avatar_url=avatar_url)
+            db = connect_db()
+            # 邮箱重复验证
+            email_conflict = db.user.find_one({'_id': {'$ne': ObjectId(id)}, 'email': request.form['email']})
+            if request.form['email'] and email_conflict:
+                error = u'邮箱已存在'
+            else:
+                # 密码字段不为空，更新密码和邮箱
+                if request.form['password']:
+                    db.user.update({'_id': ObjectId(id)}, {'$set': {'password': hashlib.md5(request.form['password']).hexdigest(), 'email': request.form['email']}})
+                    flash(u'密码更改成功，请重新登录……')
+                    return render_template('flash.html', target=url_for('logout'))
+                # 密码字段为空，只更新邮箱
+                else: 
+                    db.user.update({'_id': ObjectId(id)}, {'$set': {'email': request.form['email']}})
+                    flash(u'更改成功，3 秒钟内将转到个人页面……')
+                    return render_template('flash.html', target=url_for('show_profile'))
+                    
+        return render_template('profile.html', error=error, avatar_url=avatar_url)
 
       
 def configure_blueprints(app):
