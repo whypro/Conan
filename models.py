@@ -3,7 +3,7 @@ class User(object):
         self._id = cursor['_id']
         self.username = cursor['username']
         # self.password = cursor['password']
-        # self.email = cursor.get('email', None)
+        self.email = cursor.get('email', None)
         # self.date = cursor.get('date', None)
         # self.ip = cursor.get('ip', None)
         self.group = cursor.get('group', None)
@@ -22,6 +22,12 @@ class User(object):
 
     def get_id(self):
         return unicode(self._id)
+    
+    def get_username(self):
+        return self.username
+        
+    def get_email(self):
+        return self.email
         
     def __repr__(self):
         return '<User %r>' % (self.username)

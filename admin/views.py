@@ -64,6 +64,6 @@ def delete_user(id):
         return render_template('flash.html', target=url_for('admin.index'))
     else:
         db = connect_db()
-        cur = db.user.remove({'_id': ObjectId(id)})
+        db.user.remove({'_id': ObjectId(id)})
         return redirect(url_for('admin.index'))
     

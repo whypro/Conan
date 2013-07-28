@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}留言板{% endblock %}
+{% block body %}
+    <div id="content">
+        <div class="post">
+            <div class="messages">
+                <ul>
+                    {% if g.user.is_authenticated() %}
+                    {% for message in messages %}
+                    <li>
+                        <div class="m_name">姓名：{{ message.name }}</div>
+                        <span class="m_time">留言时间：{{ message.datetime }}</span>
+                        <span class="m_ip">IP 地址：{{ message.ip }}</span>
+                        <div class="m_content">内容：{{ message.content }}</div>
+                        <div class="m_delete"><a href="{{ url_for('delete_message', id=message._id) }}">[删除]</a></div>
+                    </li>
+                    {% else %} {# else of for #}
+                    <li><em>无留言</em></li>
+                    {% endfor %}
+                    {% else %} {# else of if #}
+                    <li><em>无留言</em></li>
+                    {% endif %}
+                </ul>
+                <div class="pagination">
+                    {% if cur_page > 1 %}
+                    <a href="{{ url_for('show_message', page=cur_page-1) }}">上一页</a>
+                    {% endif %}
+                    {% if cur_page < total_pages %}
+                    <a href="{{ url_for('show_message', page=cur_page+1) }}">下一页</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
