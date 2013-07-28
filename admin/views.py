@@ -5,7 +5,6 @@ from database import backup_db, restore_db
 
 from flask.ext.login import login_required
 from database import connect_db
-import hashlib
 from bson.objectid import ObjectId
 
 # 首页

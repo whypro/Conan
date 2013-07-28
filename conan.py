@@ -16,6 +16,7 @@ from database import connect_db
 from captcha import create_captcha
 
 from math import ceil
+from urllib import urlencode
 
 # 应用程序工厂函数
 def create_app(config):
@@ -51,7 +52,7 @@ def configure_views(app):
                 error = u'用户名不能为空'
             else:
                 db = connect_db()
-                encrypted_password = hashlib.new('md5', request.form['password']).hexdigest()
+                encrypted_password = hashlib.md5(request.form['password']).hexdigest()
                 cur = db.user.find_one({'username': request.form['username'], 'password': encrypted_password})
                 if not cur:
                     error = u'用户名或密码不正确'
@@ -98,7 +99,7 @@ def configure_views(app):
                     # 将用户写入数据库
                     db.user.insert({
                         'username': request.form['username'],
-                        'password': hashlib.new('md5', request.form['password']).hexdigest(),
+                        'password': hashlib.md5(request.form['password']).hexdigest(),
                         'email': request.form['email'], 
                         'date': datetime.datetime.now(),
                         'ip': request.remote_addr,
@@ -189,6 +190,25 @@ def configure_views(app):
             # flash(u'删除成功，3 秒钟内将返回留言页面……')
             # return render_template('flash.html', target=url_for('show_message'))
             return redirect(url_for('show_message'))
+    
+    
+    # 个人信息页面
+    @app.route('/profile/', methods=['GET', 'POST'])
+    @login_required
+    def show_profile():
+        db = connect_db()
+        id = g.user.get_id()
+        if request.method == 'POST':
+            # TODO: Email 重复验证！
+            db.user.update({'_id': ObjectId(id)}, {'$set': {'email': request.form['email']}})
+            flash(u'更改成功，3 秒钟内将转到个人页面……')
+            return render_template('flash.html', target=url_for('show_profile'))
+        else:
+            avatar_url = ''
+            user = db.user.find_one({'_id': ObjectId(id)}, {'username': 1, 'email': 1, 'reg_time': 1})
+            print str(user)
+            avatar_url = get_avatar(user.get('email', ""), 170)
+            return render_template('profile.html', user=user, avatar_url=avatar_url)
 
       
 def configure_blueprints(app):
@@ -219,6 +239,10 @@ def config_before_request(app):
         g.user = current_user
 
 
-        
-        
-        
+# 获取头像
+def get_avatar(email, size):
+    default = 'http://www.gravatar.com/avatar/00000000000000000000000000000000/?size=170'
+    gravatar_url = 'http://www.gravatar.com/avatar/' + hashlib.md5(email.lower()).hexdigest() + "?"
+    gravatar_url += urlencode({'d': default, 's': str(size)})
+    return gravatar_url
+

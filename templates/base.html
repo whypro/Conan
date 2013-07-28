@@ -34,7 +34,7 @@
             <li><a href="{{ url_for('show_service') }}">服务介绍</a></li>
             <li><a href="{{ url_for('show_goods') }}">产品介绍</a></li>#}
             {% if g.user.is_authenticated() %}
-            {#<li><a href="{{ url_for('show_profile') }}">个人中心</a></li>#}
+            <li><a href="{{ url_for('show_profile') }}">个人中心</a></li>
             <li><a href="{{ url_for('admin.index') }}">管理中心</a></li>
             <li><a href="{{ url_for('logout') }}">注销</a></li>
             {% else %}
