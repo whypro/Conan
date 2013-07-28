@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 from flask import render_template, request, redirect, url_for, abort, flash, g
 from admin import admin
-from backup import backup_db, restore_db
+from database import backup_db, restore_db
 
 from flask.ext.login import login_required
 from database import connect_db
@@ -37,7 +37,7 @@ def restore():
             flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
             return render_template('flash.html', target=url_for('admin.index'))
         else:
-            restore_db('ai')
+            restore_db()
             flash(u'恢复成功，3 秒钟内将返回首页……')
             return render_template('flash.html', target=url_for('admin.index'))
     elif request.method == 'GET':
@@ -45,9 +45,13 @@ def restore():
 
 @admin.route('/user/', methods=['GET'])
 def show_user():
-    db = connect_db()
-    users = db.user.find().sort([('username', 1)])
-    return render_template('user.html', users=users)
+    if not g.user.is_admin():
+        flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+        return render_template('flash.html', target=url_for('admin.index'))
+    else:
+        db = connect_db()
+        users = db.user.find().sort([('username', 1)])
+        return render_template('user.html', users=users)
             
 @admin.route('/user/delete/<id>/', methods=['GET'])
 @login_required

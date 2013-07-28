@@ -87,9 +87,10 @@ def configure_views(app):
                 db = connect_db()
                 username_conflict = db.user.find_one({'username': request.form['username']})
                 email_conflict = db.user.find_one({'email': request.form['email']})
+                
                 if username_conflict:
                     error = u'用户名已存在'
-                elif email_conflict:
+                elif request.form['email'] and email_conflict:
                     error = u'邮箱已存在'
                 else:
                     # 将用户写入数据库
