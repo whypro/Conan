@@ -26,7 +26,6 @@ def create_app(config):
     configure_blueprints(app)
     config_before_request(app)
     configure_flasklogin(app)
-    
     return app
 
 # 配置应用程序
@@ -95,12 +94,16 @@ def configure_views(app):
                     error = u'邮箱已存在'
                 else:
                     # 将用户写入数据库
+                    if 'x-forwarded-for' in request.headers:
+                        ip = request.headers['x-forwarded-for'].split(', ')[0]
+                    else:
+                        ip = request.remote_addr
                     db.user.insert({
                         'username': request.form['username'],
                         'password': hashlib.md5(request.form['password']).hexdigest(),
                         'email': request.form['email'], 
                         'date': datetime.datetime.now(),
-                        'ip': request.remote_addr,
+                        'ip': ip,
                         'group': 'guest'
                     })
                     flash(u'注册成功，3 秒钟内将转到登陆页面……')
@@ -169,8 +172,13 @@ def configure_views(app):
                 id = g.user.get_id() if g.user.is_authenticated() else None
 
                 db = connect_db()
+                # ip = request.headers.get('x-forwarded-for', request.remote_addr)
+                if 'x-forwarded-for' in request.headers:
+                    ip = request.headers['x-forwarded-for'].split(', ')[0]
+                else:
+                    ip = request.remote_addr
                 # dbref
-                db.message.insert({'uid': id, 'name': request.form['name'], 'email': request.form['email'], 'content': request.form['content'], 'date': datetime.datetime.now(), 'ip': request.remote_addr})
+                db.message.insert({'uid': id, 'name': request.form['name'], 'email': request.form['email'], 'content': request.form['content'], 'date': datetime.datetime.now(), 'ip': ip})
                 
                 flash(u'留言成功，3 秒钟内将返回留言页面……')
                 return render_template('flash.html', target=url_for('show_message'))

@@ -111,7 +111,7 @@ a {
     background: #FFFC7B;
     float: left;
     width: 83%;
-    min-height: 300px;
+    min-height: 430px;
 }
 
 #content a {
@@ -311,27 +311,34 @@ textarea {
 }
 
 .messages {
-    margin: 20px 0 20px 0;
+    /*margin: 20px 0 20px 0;*/
 }
 
 .messages .m_name {
     font-size: 16pt;
     font-weight: bold; 
-    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: dashed 1px #ccc;
 }
 
 .messages .m_time {
     font-size: 10pt;
 }
 
-.messages .m_content {
-    font-size: 12pt;
-    margin-top: 15px;
-    margin-bottom: 10px;
-}
-
 .messages .m_ip {
     font-size: 10pt;
+}
+
+.messages .m_delete {
+    font-size: 10pt;
+    text-align: right;
+}
+
+.messages .m_content {
+    font-size: 12pt;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-top: dashed 1px #ccc;
 }
 
 .messages ul {
@@ -341,9 +348,14 @@ textarea {
 
 .messages li {
     list-style-type: none;
-    margin: 0;
-    padding: 10px 0 10px 0;
-    border-top: solid 2px #ccc;
+    padding: 20px;
+    border: solid 1px #ccc;
+    border-radius: 30px;
+    background: #fff;
+}
+
+.messages .pagination {
+    margin: 0 1em 0 1em;
 }
 
 .goods {

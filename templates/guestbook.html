@@ -9,8 +9,10 @@
                     {% for message in messages %}
                     <li>
                         <div class="m_name">姓名：{{ message.name }}</div>
-                        <span class="m_time">留言时间：{{ message.date.date() if message.date else '不详' }}</span>&emsp;
-                        <span class="m_ip">IP 地址：{{ message.ip }}</span>
+                        <span class="m_time">留言时间：{{ message.date.strftime('%Y-%m-%d %H:%M:%S') if message.date else '不详' }}</span>
+                        {% if g.user.is_admin() %}
+                        &emsp;<span class="m_ip">IP 地址：{{ message.ip }}</span>
+                        {% endif %}
                         <div class="m_content">内容：{{ message.content }}</div>
                         <div class="m_delete"><a href="{{ url_for('delete_message', id=message._id) }}">[删除]</a></div>
                     </li>
