@@ -20,3 +20,6 @@ else:
     DB_PASSWORD = 'whypro'
     DB_PORT = 27017
     TEMP_DIR = 'temp'
+    
+DEBUG = True
+SECRET_KEY = 'I love you.'

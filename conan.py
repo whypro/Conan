@@ -27,8 +27,6 @@ def create_app(config):
     config_before_request(app)
     configure_flasklogin(app)
     
-    app.debug = True
-    app.secret_key = 'I love you.'
     return app
 
 # 配置应用程序
@@ -225,6 +223,33 @@ def configure_views(app):
     def show_about():
         return render_template('about.html')
         
+        
+    # 错误处理   
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
+
+    @app.route('/404/')
+    def test_404():
+        abort(404)
+
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        return render_template('500.html'), 500
+
+    @app.route('/500/')
+    def test_500():
+        abort(500)
+
+    @app.errorhandler(403)
+    def forbidden(e):
+        return render_template('403.html'), 403
+
+    @app.route('/403/')
+    def test_403():
+        abort(403)
+        
+        
 def configure_blueprints(app):
     from anime import anime
     app.register_blueprint(anime, url_prefix='/anime')
@@ -251,7 +276,7 @@ def config_before_request(app):
     @app.before_request
     def before_request():
         g.user = current_user
-
+            
 
 # 获取头像
 def get_avatar(email, size):
@@ -259,4 +284,5 @@ def get_avatar(email, size):
     gravatar_url = 'http://www.gravatar.com/avatar/' + hashlib.md5(email.lower()).hexdigest() + "?"
     gravatar_url += urlencode({'d': default, 's': str(size)})
     return gravatar_url
+
 

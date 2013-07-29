@@ -9,6 +9,7 @@ from bson.objectid import ObjectId
 
 # 首页
 @admin.route('/', methods=['GET'])
+@login_required
 def index():
     return render_template('admin_index.html')
 
@@ -43,6 +44,7 @@ def restore():
         return render_template('restore.html')
 
 @admin.route('/user/', methods=['GET'])
+@login_required
 def show_user():
     if not g.user.is_admin():
         flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
