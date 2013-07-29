@@ -136,25 +136,25 @@ def configure_views(app):
         messages_per_page = 5
         offset = (page - 1) * messages_per_page
         
-        if g.user.is_authenticated():
-            db = connect_db()
-            if g.user.is_admin():
-                total_messages = db.message.count()
-                total_pages = int(ceil(total_messages / messages_per_page)) # from __future__ import division
-                
-                messages = db.message.find().sort([('date', -1)]).skip(offset).limit(messages_per_page)
-
-                if page != 1 and not messages.count():
-                    abort(404)
-            else:
-                total_messages = db.message.find({'name': g.user.get_username()}).count()
-                total_pages = int(ceil(total_messages / messages_per_page)) # from __future__ import division
-                
-                messages = db.message.find({'name': g.user.get_username()}).skip(offset).limit(messages_per_page)
-
-                if page != 1 and not messages.count():
-                    abort(404)
-
+        db = connect_db()
+        if not g.user.is_authenticated():
+            # 若未登录，则显示 visible 为 public 的留言
+            messages = db.message.find({'visible': 'public'}).sort([('date', -1)]).skip(offset).limit(messages_per_page)
+        elif g.user.is_admin():
+            # 若为超级用户，则显示所有留言
+            messages = db.message.find().sort([('date', -1)]).skip(offset).limit(messages_per_page)
+        else:
+            # 若为普通用户，则显示 visible 为 public 的留言和自己的留言
+            messages = db.message.find({'$or': [{'visible': 'public'}, {'name': g.user.get_username()}]}).sort([('date', -1)]).skip(offset).limit(messages_per_page)
+            
+        total_messages = messages.count(with_limit_and_skip=False)
+        cur_messages = messages.count(with_limit_and_skip=True)
+        
+        total_pages = int(ceil(total_messages / messages_per_page)) # from __future__ import division
+            
+        if page != 1 and not cur_messages:
+            abort(404)
+                    
         return render_template('guestbook.html', messages=messages, cur_page=page, total_pages=total_pages)
         
     # 联系我们页面 
@@ -178,7 +178,7 @@ def configure_views(app):
                 else:
                     ip = request.remote_addr
                 # dbref
-                db.message.insert({'uid': id, 'name': request.form['name'], 'email': request.form['email'], 'content': request.form['content'], 'date': datetime.datetime.now(), 'ip': ip})
+                db.message.insert({'uid': id, 'name': request.form['name'], 'email': request.form['email'], 'content': request.form['content'], 'date': datetime.datetime.now(), 'ip': ip, 'visible': 'protected'})
                 
                 flash(u'留言成功，3 秒钟内将返回留言页面……')
                 return render_template('flash.html', target=url_for('show_message'))
@@ -196,7 +196,28 @@ def configure_views(app):
             # flash(u'删除成功，3 秒钟内将返回留言页面……')
             # return render_template('flash.html', target=url_for('show_message'))
             return redirect(url_for('show_message'))
-    
+
+    @app.route('/guestbook/hide/<id>/', methods=['GET'])
+    @login_required
+    def hide_message(id):
+        if not g.user.is_admin():
+            flash(u'权限不足，3 秒钟内将返回留言页面……')
+            return render_template('flash.html', target=url_for('show_message'))
+        else:
+            db = connect_db()
+            db.message.update({'_id': ObjectId(id)}, {'$set': {'visible': 'protected'}})
+            return redirect(url_for('show_message'))
+        
+    @app.route('/guestbook/unhide/<id>/', methods=['GET'])
+    @login_required
+    def unhide_message(id):
+        if not g.user.is_admin():
+            flash(u'权限不足，3 秒钟内将返回留言页面……')
+            return render_template('flash.html', target=url_for('show_message'))
+        else:
+            db = connect_db()
+            db.message.update({'_id': ObjectId(id)}, {'$set': {'visible': 'public'}})
+            return redirect(url_for('show_message'))
     
     # 个人信息页面
     @app.route('/profile/', methods=['GET', 'POST'])
