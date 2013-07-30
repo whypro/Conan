@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 from flask import render_template, request, redirect, url_for, abort, flash, g
 from admin import admin
-from database import backup_db, restore_db
+from database import backup_db, restore_db, local_to_bucket, bucket_to_local
 
 from flask.ext.login import login_required
 from database import connect_db
@@ -42,6 +42,29 @@ def restore():
             return render_template('flash.html', target=url_for('admin.index'))
     elif request.method == 'GET':
         return render_template('restore.html')
+
+# 
+@admin.route('/sync/', methods=['GET', 'POST'])
+@login_required
+def sync():
+    if not g.user.is_admin():
+        flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+        return render_template('flash.html', target=url_for('admin.index')) 
+    else:
+        if request.method == 'POST':
+            if request.form['type'] == 'local_to_bucket':
+                error = local_to_bucket()
+            elif request.form['type'] == 'bucket_to_local':
+                error = bucket_to_local()
+            else:
+                error = 1
+            if error:
+                flash(u'同步失败，3 秒钟内将返回首页……')
+            else:
+                flash(u'同步成功，3 秒钟内将返回首页……')
+            return render_template('flash.html', target=url_for('admin.index'))
+        else:
+            return render_template('sync.html')
 
 @admin.route('/user/', methods=['GET'])
 @login_required

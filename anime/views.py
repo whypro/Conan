@@ -17,11 +17,11 @@ def show_tv():
     tv_records = db.tv.find().sort([('number', 1)])
     return render_template('show.html', records=tv_records, category='tv')
     
-@anime.route('/ova/', methods=['GET'])
-def show_ova():
+@anime.route('/movie/', methods=['GET'])
+def show_movie():
     db = connect_db()
-    ova_records = db.ova.find().sort([('number', 1)])
-    return render_template('show.html', records=ova_records, category='ova')
+    movie_records = db.movie.find().sort([('number', 1)])
+    return render_template('show.html', records=movie_records, category='movie')
     
 @anime.route('/add/', defaults={'n': 5}, methods=['GET', 'POST'])
 @anime.route('/add/<int:n>/', methods=['GET', 'POST'])
