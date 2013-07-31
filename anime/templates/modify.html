@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block title %}编辑条目{% endblock %}
+{% block script %}
+    <link href="{{ url_for('static', filename='tablecloth/tablecloth.css') }}" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="{{ url_for('static', filename='tablecloth/tablecloth.js') }}"></script>
+{% endblock %}
 {% block body %}
 <div id="content">
     <div class="post">

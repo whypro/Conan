@@ -8,6 +8,8 @@ from bson.objectid import ObjectId
 
 from anime import anime
 from anime.views import *
+from music import music
+from music.views import *
 from admin import admin
 from admin.views import *
 
@@ -252,7 +254,6 @@ def configure_views(app):
     def show_about():
         return render_template('about.html')
         
-        
     # 错误处理   
     @app.errorhandler(404)
     def page_not_found(e):
@@ -282,6 +283,8 @@ def configure_views(app):
 def configure_blueprints(app):
     from anime import anime
     app.register_blueprint(anime, url_prefix='/anime')
+    from music import music
+    app.register_blueprint(music, url_prefix='/music')
     from admin import admin
     app.register_blueprint(admin, url_prefix='/admin')
 

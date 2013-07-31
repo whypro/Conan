@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from pymongo import MongoClient
 import json
 from bson import json_util
@@ -70,8 +70,7 @@ def backup_db():
             BUCKET_NAME = 'whypro'
             
             baebcs.put_file(BUCKET_NAME, bucket_object, temp_filename)
-            # 如果不加下面这句，就无法在 bucket 中正常显示 backup 目录与文件，BAE bucket 的 BUG？
-            # baebcs.put_object(BUCKET_NAME, os.path.join(dirname, 'dummy'), '0')
+
         # 存入本地 backup 目录
         else:
             dirname = 'backup'
@@ -116,7 +115,6 @@ def restore_db():
         BUCKET_NAME = 'whypro'
         (e, objects) = baebcs.list_objects(BUCKET_NAME, prefix='/backup')
         # 将 objects 保存到临时目录下
-        objects.remove('/backup/dummy')
         if not os.path.exists(temp_dir):
             os.makedirs(temp_dir)
         for object in objects:
@@ -177,9 +175,6 @@ def local_to_bucket():
         obj.put_file(local_file)
         print bucket_object
         print local_file
-    # 如果不加下面这句，就无法在 bucket 中正常显示 backup 目录与文件，BAE bucket 的 BUG？
-    # obj = b.object(bucket_dirname + '/' + 'dummy')
-    # obj.put('0')
     return 0    # No error 
 
 # $bucket/backup/ => backup/
@@ -197,7 +192,6 @@ def bucket_to_local():
     b = bcs.bucket(BUCKET_NAME)
     objects = b.list_objects(prefix=bucket_dirname)
 
-    # objects.remove('/backup/dummy')
     for object in objects:
         obj_name = object.object_name
         local_file = os.path.join(local_dirname, obj_name.split('/')[-1])
