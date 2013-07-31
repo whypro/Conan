@@ -305,7 +305,21 @@ def config_before_request(app):
     @app.before_request
     def before_request():
         g.user = current_user
-            
+        
+        # ip 统计
+        if 'x-forwarded-for' in request.headers:
+            ip = request.headers['x-forwarded-for'].split(', ')[0]
+        else:
+            ip = request.remote_addr
+        url = request.url
+        method = request.method
+        user_agent = request.headers.get('User-Agent', None)
+        referer = request.headers.get('Referer', None)
+        date = datetime.datetime.now()
+        db = connect_db()
+        # if not db.visit.find({'ip': ip, 'date': datetime.datetime.now()}).count():
+        db.visit.insert({'ip': ip, 'date': date, 'url': url, 'method': method, 'referer': referer, 'user_agent': user_agent})
+        
 
 # 获取头像
 def get_avatar(email, size):

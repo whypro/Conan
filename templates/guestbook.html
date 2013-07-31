@@ -17,8 +17,10 @@
                         <div class="m_content">内容：{{ message.content }}</div>
                         {% if g.user.is_authenticated() %}
                         <div class="m_delete">
+                        {% if g.user.get_id() == message.uid or g.user.is_admin() %}
                         {% if message.visible != 'public' %}<a href="{{ url_for('unhide_message', id=message._id) }}">[设为可见]</a>{% else %}<a href="{{ url_for('hide_message', id=message._id) }}">[设为隐藏]</a>{% endif %}
                         <a href="{{ url_for('delete_message', id=message._id) }}">[删除]</a>
+                        {% endif %}
                         </div>
                         {% endif %}
                     </li>
