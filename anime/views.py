@@ -60,7 +60,7 @@ def str_to_datetime(date_str):
         datetime_obj = None
     return datetime_obj
 
-@anime.route('/modify/<category>/<id>/', methods=['GET', 'POST'])
+@anime.route('/<category>/modify/<id>/', methods=['GET', 'POST'])
 @login_required
 def modify_record(category, id):
     if request.method == 'POST':
@@ -87,7 +87,7 @@ def modify_record(category, id):
             return render_template('modify.html', record=cur)
         
 
-@anime.route('/delete/<category>/<id>/', methods=['GET'])
+@anime.route('/<category>/delete/<id>/', methods=['GET'])
 @login_required
 def delete_record(category, id):
     if not g.user.is_admin():

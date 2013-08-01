@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% block body %}
+<div id="content">
+    <div class="post">
+        <ul>
+            <li><a href="{{ url_for('anime.index') }}">名侦探柯南动画</a></li>
+            <li><a href="{{ url_for('music.index') }}">名侦探柯南音乐</a></li>
+            <div style="padding: 1em;"><img src="{{ url_for('static', filename='image/conan.png') }}" /></div>
+        </ul>
+    </div>
+</div>
+{% endblock %}
