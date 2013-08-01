@@ -28,7 +28,9 @@
             {% else %}
             <em>欢迎，游客</em>&emsp;|
             {% endif %}
-            <li><a href="{{ url_for('anime.index') }}">首页</a></li>
+            <li><a href="{{ url_for('index') }}">首页</a></li>
+            <li><a href="{{ url_for('anime.index') }}">动画</a></li>
+            <li><a href="{{ url_for('music.index') }}">音乐</a></li>
             {#
             <li><a href="{{ url_for('show_service') }}">服务介绍</a></li>
             <li><a href="{{ url_for('show_goods') }}">产品介绍</a></li>#}

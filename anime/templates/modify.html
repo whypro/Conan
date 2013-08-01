@@ -18,10 +18,10 @@
                     <th>评分</th>
                 </thead>
                 <tr>
-                    <td><input class="basic-input" name="number" value="{{ record.number }}" /></td>
-                    <td><input class="basic-input" name="cn_title" value="{{ record.cn_title }}" /></td>
-                    <td><input class="basic-input" name="jp_title" value="{{ record.jp_title }}" /></td>
-                    <td><input class="basic-input" name="date" value="{% if record.date %}{{ record.date.date() }}{% else %}{% endif %}" /></td>
+                    <td><input class="basic-input-table" name="number" value="{{ record.number }}" /></td>
+                    <td><input class="basic-input-table" name="cn_title" value="{{ record.cn_title }}" /></td>
+                    <td><input class="basic-input-table" name="jp_title" value="{{ record.jp_title }}" /></td>
+                    <td><input class="basic-input-table" name="date" value="{% if record.date %}{{ record.date.date() }}{% else %}{% endif %}" /></td>
                     <td>
                     <select class="select-input" name="rate">
                         <option value=""></option>
