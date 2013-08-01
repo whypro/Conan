@@ -1,0 +1,1 @@
+mongoimport.exe -d conan -c music --type csv --file conan_music.csv --fields category,number,jp_title,cn_title,artist,begin,end,xiami_id

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}访问管理{% endblock %}
+{% block script %}
+    <link href="{{ url_for('static', filename='tablecloth/tablecloth.css') }}" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="{{ url_for('static', filename='tablecloth/tablecloth.js') }}"></script>
+{% endblock %}
+{% block body %}
+<div id="content">
+    <div class="post">
+        <h1>访问管理</h1>
+        {% if records.count() %}
+        <table>
+            <thead>
+                <th>Time</th>
+                <th>URL</th>
+                <th>IP</th>
+                <th>Referer</th>
+                <th>User Agent</th>
+                <th>Method</th>
+                {% if g.user.is_authenticated() %}<th></th>{% endif %}
+            </thead>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{#{{ record.url }}#}</td>
+                <td>{{ record.ip }}</td>
+                <td>{{ record.referer }}</td>
+                <td>{{ record.user_agent }}</td>
+                <td>{{ record.method }}</td>
+                {% if g.user.is_authenticated() %}
+                <td>{#<span><a href="{{ url_for('admin.modify_user', id=user._id) }}">修改</a></span><span><a href="{{ url_for('admin.delete_user', id=user._id) }}">删除</a></span></td>#}
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        {#
+        {% if g.user.is_authenticated() %}
+        <input class="btn-submit" type="button" value="添加" onclick="add()" />
+        {% endif %}
+        #}
+    </div>
+</div>
+{% endblock %}
+
+

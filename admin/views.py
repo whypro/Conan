@@ -76,7 +76,18 @@ def show_user():
         db = connect_db()
         users = db.user.find().sort([('username', 1)])
         return render_template('user.html', users=users)
-            
+   
+@admin.route('/visit/', methods=['GET'])
+@login_required
+def show_visit():
+    if not g.user.is_admin():
+        flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+        return render_template('flash.html', target=url_for('admin.index'))
+    else:
+        db = connect_db()
+        records = db.visit.find().sort([('date', -1)])
+        return render_template('visit.html', records=records)
+         
 @admin.route('/user/delete/<id>/', methods=['GET'])
 @login_required
 def delete_user(id):

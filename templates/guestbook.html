@@ -11,7 +11,8 @@
                         <span class="m_time">留言时间：{{ message.date.strftime('%Y-%m-%d %H:%M:%S') if message.date else '不详' }}</span>
                         {% if g.user.is_authenticated() %}
                         {% if g.user.is_admin() %}
-                        &emsp;<span class="m_ip">IP 地址：{{ message.ip }}</span>
+                        &emsp;<span class="m_ip">邮箱：{{ message.email if message.email else '不详'}}</span>
+                        &emsp;<span class="m_ip">IP 地址：{{ message.ip if message.ip else '不详' }}</span>
                         {% endif %}
                         {% endif %}
                         <div class="m_content">内容：{{ message.content }}</div>
