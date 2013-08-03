@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
-from flask import Flask, g, flash, redirect, url_for, session
+from flask import Flask, g, flash, redirect, url_for, session, send_from_directory
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 
 import os, hashlib, StringIO
@@ -36,6 +36,11 @@ def configure_app(app, config):
 
 # 配置视图
 def configure_views(app):
+
+    @app.route('/favicon.ico')
+    def favicon():
+        return send_from_directory('static', 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
     @app.route('/')
     def index():
         return render_template('index.html')
@@ -43,6 +48,7 @@ def configure_views(app):
     # 登录页面
     @app.route('/login/', methods=['GET', 'POST'])
     def login():
+        next = get_redirect_target()
         if g.user.is_authenticated():
             return redirect(url_for('index'))
         error = None
@@ -56,11 +62,13 @@ def configure_views(app):
                 if not cur:
                     error = u'用户名或密码不正确'
                 else:
+                    
                     user = User(cur)
                     login_user(user, remember=('remember' in request.form))
-                    flash(u'登陆成功，3 秒钟内将返回首页……')
-                    return render_template('flash.html', target=url_for('index'))
-        return render_template('login.html', error=error)
+                    flash(u'登陆成功，3 秒钟内将返回登录前页面……')
+                    return redirect_back('index')
+                    
+        return render_template('login.html', error=error, next=next)
     
     # 注销
     @app.route('/logout/', methods=['GET'])
@@ -278,7 +286,28 @@ def configure_views(app):
     @app.route('/403/')
     def test_403():
         abort(403)
-        
+
+    from urlparse import urlparse, urljoin
+    # 判断 URL 是否安全合法
+    def is_safe_url(target):
+        ref_url = urlparse(request.host_url)
+        test_url = urlparse(urljoin(request.host_url, target))
+        return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+
+    # 获得 next target，从 ?next=*** 或者 request.referrer 中获取
+    def get_redirect_target():
+        for target in request.values.get('next'), request.referrer:
+            if not target:
+                continue
+            if is_safe_url(target):
+                return target
+
+    # 如果从 form 中获取 next 参数（由模板参数提供），如果为空则返回传入参数 endpoint 视图
+    def redirect_back(endpoint, **values):
+        target = request.form['next']
+        if not target or not is_safe_url(target):
+            target = url_for(endpoint, **values)
+        return render_template('flash.html', target=target)
         
 def configure_blueprints(app):
     from anime import anime
@@ -316,8 +345,8 @@ def config_before_request(app):
             ip = request.remote_addr
         url = request.url
         method = request.method
-        user_agent = request.headers.get('User-Agent', None)
-        referer = request.headers.get('Referer', None)
+        user_agent = request.user_agent.__dict__
+        referer = request.referrer
         date = datetime.datetime.now()
         db = connect_db()
         # if not db.visit.find({'ip': ip, 'date': datetime.datetime.now()}).count():

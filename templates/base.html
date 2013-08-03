@@ -9,10 +9,10 @@
     {% block script %}{% endblock %}
 
     <script type="text/javascript">
-    function add() {
-        window.location.href="{{ url_for('anime.add_record') }}"
+    function add(category) {
+        window.location.href="{{ url_for('anime.add_record', category=category) }}"
     }
-    function show() {
+    function back() {
         window.history.back()
     }
     </script>

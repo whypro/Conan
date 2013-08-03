@@ -16,7 +16,6 @@
                     <th>日文名</th>
                     <th>上映日期</th>
                     <th>评分</th>
-                    <th>类别</th>
                 </thead>
                 {% for i in range(0, n) %}
                 <tr>
@@ -34,18 +33,12 @@
                         <option value="1">1</option>
                     </select>
                     </td>
-                    <td>
-                    <select class="select-input" name="category">
-                        <option value="TV" selected >TV</option>
-                        <option value="MOVIE">MOVIE</option>
-                    </select>
-                    </td>
                 </tr>
                 {% endfor %}
             </table>
             <input class="btn-submit" type="submit" value="保存" />
             <span>&emsp;&emsp;</span>
-            <input class="btn-submit" type="button" value="返回" onclick="show()" />
+            <input class="btn-submit" type="button" value="返回" onclick="back()" />
         </form>
     </div>
 </div>

@@ -11,9 +11,9 @@
         {% if records.count() %}
         <table>
             <thead>
-                <th>Time</th>
+                <th style="width: 90px;">Time</th>
                 <th>URL</th>
-                <th>IP</th>
+                <th style="width: 100px;">IP</th>
                 <th>Referer</th>
                 <th>User Agent</th>
                 <th>Method</th>
@@ -21,8 +21,8 @@
             </thead>
             {% for record in records %}
             <tr>
-                <td>{{ record.date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                <td>{#{{ record.url }}#}</td>
+                <td>{{ record.date.strftime('%Y-%m-%d\n%H:%M:%S') }}</td>
+                <td>{{ record.url }}</td>
                 <td>{{ record.ip }}</td>
                 <td>{{ record.referer }}</td>
                 <td>{{ record.user_agent }}</td>

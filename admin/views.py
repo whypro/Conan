@@ -19,11 +19,11 @@ def index():
 def backup():
     if request.method == 'POST':
         if not g.user.is_admin():
-            flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+            flash(u'权限不足，请联系管理员，3 秒钟内将返回管理首页……')
             return render_template('flash.html', target=url_for('admin.index'))
         else:
             backup_db()
-            flash(u'备份成功，3 秒钟内将返回首页……')
+            flash(u'备份成功，3 秒钟内将返回管理首页……')
             return render_template('flash.html', target=url_for('admin.index'))
     elif request.method == 'GET':
         return render_template('backup.html')
@@ -34,11 +34,11 @@ def backup():
 def restore():
     if request.method == 'POST':
         if not g.user.is_admin():
-            flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+            flash(u'权限不足，请联系管理员，3 秒钟内将返回管理首页……')
             return render_template('flash.html', target=url_for('admin.index'))
         else:
             restore_db()
-            flash(u'恢复成功，3 秒钟内将返回首页……')
+            flash(u'恢复成功，3 秒钟内将返回管理首页……')
             return render_template('flash.html', target=url_for('admin.index'))
     elif request.method == 'GET':
         return render_template('restore.html')
@@ -48,7 +48,7 @@ def restore():
 @login_required
 def sync():
     if not g.user.is_admin():
-        flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+        flash(u'权限不足，请联系管理员，3 秒钟内将返回管理首页……')
         return render_template('flash.html', target=url_for('admin.index')) 
     else:
         if request.method == 'POST':
@@ -59,9 +59,9 @@ def sync():
             else:
                 error = 1
             if error:
-                flash(u'同步失败，3 秒钟内将返回首页……')
+                flash(u'同步失败，3 秒钟内将返回管理首页……')
             else:
-                flash(u'同步成功，3 秒钟内将返回首页……')
+                flash(u'同步成功，3 秒钟内将返回管理首页……')
             return render_template('flash.html', target=url_for('admin.index'))
         else:
             return render_template('sync.html')
@@ -70,18 +70,18 @@ def sync():
 @login_required
 def show_user():
     if not g.user.is_admin():
-        flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+        flash(u'权限不足，请联系管理员，3 秒钟内将返回管理首页……')
         return render_template('flash.html', target=url_for('admin.index'))
     else:
         db = connect_db()
-        users = db.user.find().sort([('username', 1)])
+        users = db.user.find().sort([('date', -1)])
         return render_template('user.html', users=users)
    
 @admin.route('/visit/', methods=['GET'])
 @login_required
 def show_visit():
     if not g.user.is_admin():
-        flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+        flash(u'权限不足，请联系管理员，3 秒钟内将返回管理首页……')
         return render_template('flash.html', target=url_for('admin.index'))
     else:
         db = connect_db()
@@ -92,10 +92,10 @@ def show_visit():
 @login_required
 def delete_user(id):
     if not g.user.is_admin():
-        flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
+        flash(u'权限不足，请联系管理员，3 秒钟内将返回管理首页……')
         return render_template('flash.html', target=url_for('admin.index'))
     elif g.user.get_id() == id:
-        flash(u'不能删除你自己，3 秒钟内将返回首页……')
+        flash(u'不能删除你自己，3 秒钟内将返回管理首页……')
         return render_template('flash.html', target=url_for('admin.index'))
     else:
         db = connect_db()

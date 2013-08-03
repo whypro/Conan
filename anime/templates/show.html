@@ -11,16 +11,16 @@
         {% if records.count() %}
         <table>
             <thead>
-                <th>番号</th>
+                <th style="width: 35px;">番号</th>
                 <th>中文名</th>
                 <th>日文名</th>
-                <th>上映日期</th>
+                <th style="width: 90px;">上映日期</th>
                 <th>评分</th>
                 {% if g.user.is_authenticated() %}<th></th>{% endif %}
             </thead>
             {% for record in records %}
             <tr>
-                <td>{{ record.number }}</td>
+                <td><a name="{{ record.number }}">{{ record.number }}</a></td>
                 <td>{{ record.cn_title }}</td>
                 <td>{{ record.jp_title }}</td>
                 <td>{% if record.date %}{{ record.date.date() }}{% else %}N/A{% endif %}</td>
@@ -36,7 +36,7 @@
         {% endif %}
         
         {% if g.user.is_authenticated() %}
-        <input class="btn-submit" type="button" value="添加" onclick="add()" />
+        <input class="btn-submit" type="button" value="添加" onclick="add('{{ category }}')" />
         {% endif %}
     </div>
 </div>

@@ -11,22 +11,21 @@ import datetime
 def index():
     return render_template('anime_index.html')
 
-@anime.route('/tv/', methods=['GET'])
-def show_tv():
+@anime.route('/<category>/', methods=['GET'])
+def show_anime(category):
+    if category not in ('tv', 'movie'):
+        abort(404)
     db = connect_db()
-    tv_records = db.tv.find().sort([('number', 1)])
-    return render_template('show.html', records=tv_records, category='tv')
+    records = db[category].find().sort([('number', 1)])
+    return render_template('show.html', records=records, category=category)
     
-@anime.route('/movie/', methods=['GET'])
-def show_movie():
-    db = connect_db()
-    movie_records = db.movie.find().sort([('number', 1)])
-    return render_template('show.html', records=movie_records, category='movie')
-    
-@anime.route('/add/', defaults={'n': 5}, methods=['GET', 'POST'])
-@anime.route('/add/<int:n>/', methods=['GET', 'POST'])
+@anime.route('/<category>/add/', defaults={'n': 5}, methods=['GET', 'POST'])
+@anime.route('/<category>/add/<int:n>/', methods=['GET', 'POST'])
 @login_required
-def add_record(n):
+def add_record(category, n):
+    if category not in ('tv', 'movie'):
+        abort(404)
+
     if request.method == 'POST':
         items = dict(request.form)
         db = connect_db()
@@ -39,7 +38,6 @@ def add_record(n):
                 jp_title = items['jp_title'][i]
                 rate = items['rate'][i]
                 date_str = items['date'][i]
-                category = items['category'][i]
                 
                 data = {
                     'number': int(number), 
@@ -48,8 +46,8 @@ def add_record(n):
                     'rate': None if not rate.isdigit() else int(rate), 
                     'date': str_to_datetime(date_str)
                 }
-                cur = db[category.lower()].insert(data)
-        return redirect(url_for('.index'))
+                cur = db[category].insert(data)
+        return redirect(url_for('anime.show_anime', category=category))
     elif request.method == 'GET':
         return render_template('add.html', n=n)
 
@@ -66,7 +64,7 @@ def modify_record(category, id):
     if request.method == 'POST':
         if not g.user.is_admin():
             flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
-            return render_template('flash.html', target=url_for('anime.index'))
+            return render_template('flash.html', target=url_for('anime.show_anime', category=category))
         else:
             number = request.form['number']
             # 如果 number 非空，插入记录
@@ -77,7 +75,8 @@ def modify_record(category, id):
                 date_str = request.form['date']
                 db = connect_db()
                 cur = db[category.lower()].update({'_id': ObjectId(id)}, {'$set': {'number': int(number), 'cn_title': cn_title, 'jp_title': jp_title, 'rate': None if not rate.isdigit() else int(rate), 'date': str_to_datetime(date_str)}})
-            return redirect(url_for('.index'))
+            return redirect(url_for('anime.show_anime', category=category))
+
     elif request.method == 'GET':
         db = connect_db()
         cur = db[category.lower()].find_one({'_id': ObjectId(id)})
@@ -92,8 +91,8 @@ def modify_record(category, id):
 def delete_record(category, id):
     if not g.user.is_admin():
         flash(u'权限不足，请联系管理员，3 秒钟内将返回首页……')
-        return render_template('flash.html', target=url_for('anime.index'))
+        return render_template('flash.html', target=url_for('anime.show_anime', category=category))
     else:
         db = connect_db()
         cur = db[category.lower()].remove({'_id': ObjectId(id)})
-        return redirect(url_for('.index'))
+        return redirect(url_for('anime.show_anime', category=category))
