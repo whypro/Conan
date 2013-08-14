@@ -50,16 +50,26 @@ def backup_db():
     for file in files:
         temp_filename = os.path.join(temp_dir, file)
         os.remove(temp_filename)
-        
+    
+    # 将 collections 存入临时目录
     for collection in collections:
         # back_filename = collection + '_' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
         temp_filename = os.path.join(temp_dir, collection)
         f = open(temp_filename, 'w+')
-        results = db[collection].find()
-        for result in results:
-            str = json.dumps(result, ensure_ascii=False, default=json_util.default)
-            f.write(str.encode('utf-8'))
-            f.write('\n')
+
+        # 防止 cursor 超时的一种替代方案
+        batch_size = 30
+        start = 0
+        while True:
+            results = db[collection].find().skip(start).limit(batch_size)
+            if not results.count(with_limit_and_skip=True):
+                break
+            start += batch_size
+
+            for result in results:
+                str = json.dumps(result, ensure_ascii=False, default=json_util.default)
+                f.write(str.encode('utf-8'))
+                f.write('\n')
         f.close()
 
         # 存入 BAE Bucket
