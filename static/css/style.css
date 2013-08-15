@@ -347,10 +347,25 @@ textarea {
 }
 
 .messages .m_content {
-    font-size: 12pt;
+    font-size: 10pt;
     padding-top: 20px;
     padding-bottom: 20px;
     border-top: dashed 1px #ccc;
+}
+
+.messages .m_replies {
+    font-size: 10pt;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    border-top: dashed 1px #ccc;
+}
+
+.messages .m_replies li {
+    list-style-type: none;
+    padding: 5px;
+    border: solid 1px #ccc;
+    border-radius: 10px;
+    background: #eee;
 }
 
 .messages ul {

@@ -5,6 +5,8 @@ from flask.ext.login import LoginManager, login_user, logout_user, current_user,
 
 import os, hashlib, StringIO
 from bson.objectid import ObjectId
+from bson.dbref import DBRef
+from pymongo.son_manipulator import AutoReference, NamespaceInjector
 
 from anime import anime
 from anime.views import *
@@ -62,7 +64,6 @@ def configure_views(app):
                 if not cur:
                     error = u'用户名或密码不正确'
                 else:
-                    
                     user = User(cur)
                     login_user(user, remember=('remember' in request.form))
                     flash(u'登陆成功，3 秒钟内将返回登录前页面……')
@@ -147,6 +148,10 @@ def configure_views(app):
         offset = (page - 1) * messages_per_page
         
         db = connect_db()
+        # 自动解引用
+        db.add_son_manipulator(NamespaceInjector())
+        db.add_son_manipulator(AutoReference(db))
+
         if not g.user.is_authenticated():
             # 若未登录，则显示 visible 为 public 的留言
             messages = db.message.find({'visible': 'public'}).sort([('date', -1)]).skip(offset).limit(messages_per_page)
@@ -229,6 +234,49 @@ def configure_views(app):
             db.message.update({'_id': ObjectId(id)}, {'$set': {'visible': 'public'}})
             return redirect(url_for('show_message'))
     
+    # 回复留言
+    @app.route('/guestbook/reply/<id>/', methods=['GET', 'POST'])
+    @login_required
+    def reply_message(id):
+        error = None
+        if request.method == 'POST':
+            if not request.form['content']:
+                error = u'回复内容不能为空'
+            elif request.form['captcha'].upper() != session['captcha'].upper():
+                error = u'验证码不正确'
+            else:
+                uid = g.user.get_id() if g.user.is_authenticated() else None
+                db = connect_db()
+                # ip = request.headers.get('x-forwarded-for', request.remote_addr)
+                if 'x-forwarded-for' in request.headers:
+                    ip = request.headers['x-forwarded-for'].split(', ')[0]
+                else:
+                    ip = request.remote_addr
+                # dbref
+                db.message.update({'_id': ObjectId(id)}, {'$push': {'replies': {'_id': ObjectId(), 'user': DBRef('user', ObjectId(uid)), 'content': request.form['content'], 'date': datetime.datetime.now(), 'ip': ip}}})
+                
+                flash(u'回复成功，3 秒钟内将返回留言页面……')
+                return render_template('flash.html', target=url_for('show_message'))
+
+        db = connect_db()
+        message = db.message.find_one({'_id': ObjectId(id)})
+        return render_template('reply.html', message=message, error=error)
+
+    # 删除回复
+    @app.route('/guestbook/reply/<mid>/delete/<rid>/', methods=['GET', 'POST'])
+    @login_required
+    def delete_reply(mid, rid):
+        if not g.user.is_admin():
+            flash(u'权限不足，3 秒钟内将返回留言页面……')
+            return render_template('flash.html', target=url_for('show_message'))
+        else:
+            db = connect_db()
+            db.message.update({'_id': ObjectId(mid)}, {'$pull': {'replies': {'_id': ObjectId(rid)}}})
+            # flash(u'删除成功，3 秒钟内将返回留言页面……')
+            # return render_template('flash.html', target=url_for('show_message'))
+            return redirect(url_for('show_message'))
+
+
     # 个人信息页面
     @app.route('/profile/', methods=['GET', 'POST'])
     @login_required
@@ -265,7 +313,10 @@ def configure_views(app):
     # 错误处理   
     @app.errorhandler(404)
     def page_not_found(e):
-        return render_template('404.html'), 404
+        next = get_redirect_target()
+        if not next:
+            next = url_for('index')
+        return render_template('404.html', next=next), 404
 
     @app.route('/404/')
     def test_404():

@@ -16,14 +16,23 @@
                         {% endif %}
                         {% endif %}
                         <div class="m_content">内容：{{ message.content }}</div>
-                        {% if g.user.is_authenticated() %}
+                        
                         <div class="m_delete">
+                        <a href="{{ url_for('reply_message', id=message._id) }}">[回复]</a>
+                        {% if g.user.is_authenticated() %}
                         {% if g.user.get_id() == message.uid or g.user.is_admin() %}
                         {% if message.visible != 'public' %}<a href="{{ url_for('unhide_message', id=message._id) }}">[设为可见]</a>{% else %}<a href="{{ url_for('hide_message', id=message._id) }}">[设为隐藏]</a>{% endif %}
                         <a href="{{ url_for('delete_message', id=message._id) }}">[删除]</a>
                         {% endif %}
-                        </div>
                         {% endif %}
+                        </div>
+                        <div class="m_replies">
+                        <ul>
+                        {% for reply in message.replies%}
+                            <li>{{ reply.user.username if reply.user else None }}:&emsp;{{ reply.content }}<div class="r_manage" style="text-align: right;"><a href="{{ url_for('delete_reply', mid=message._id, rid=reply._id) }}">[删除]</a></div></li>
+                        {% endfor %}
+                        </ul>
+                        </div>
                     </li>
                     {% else %} {# else of for #}
                     <li style="text-align: center;"><em>无留言</em></li>
@@ -33,6 +42,13 @@
                     {% if cur_page > 1 %}
                     <a href="{{ url_for('show_message', page=cur_page-1) }}">上一页</a>
                     {% endif %}
+                    {% for i in range(1, total_pages + 1) %}
+                        {% if i == cur_page %}
+                        <a style="color: red;">{{ i }}</a>
+                        {% else %}
+                        <a href="{{ url_for('show_message', page=i) }}">{{ i }}</a>
+                        {% endif %}
+                    {% endfor %}
                     {% if cur_page < total_pages %}
                     <a href="{{ url_for('show_message', page=cur_page+1) }}">下一页</a>
                     {% endif %}
