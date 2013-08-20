@@ -4,9 +4,9 @@
 <div id="content">
     <div class="post">
         <ul>
-            <li><a href="{{ url_for('music.show_op') }}">名侦探柯南 TV OP 曲目表</a>（已完成）</li>
-            <li><a href="{{ url_for('music.show_ed') }}">名侦探柯南 TV ED 曲目表</a>（已完成）</li>
-            <li><a href="{{ url_for('music.show_in') }}">名侦探柯南 TV IN 曲目表</a>（已完成）</li>
+            <li><a href="{{ url_for('music.show_music', category='op') }}">名侦探柯南 TV OP 曲目表</a>（已完成）</li>
+            <li><a href="{{ url_for('music.show_music', category='ed') }}">名侦探柯南 TV ED 曲目表</a>（已完成）</li>
+            <li><a href="{{ url_for('music.show_music', category='in') }}">名侦探柯南 TV IN 曲目表</a>（已完成）</li>
             <li><a href="">名侦探柯南 MOVIE THEME 曲目表</a>（未完成）</li>
             <div style="padding: 1em;"><img src="{{ url_for('static', filename='image/conan.png') }}" /></div>
         </ul>

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}添加条目{% endblock %}
+{% block script %}
+    <link href="{{ url_for('static', filename='tablecloth/tablecloth.css') }}" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="{{ url_for('static', filename='tablecloth/tablecloth.js') }}"></script>
+{% endblock %}
+{% block body %}
+<div id="content">
+    <div class="post">
+        <h1>添加条目</h1>
+        <form method="post">
+            <table>
+                <thead>
+                    <th>序号</th>
+                    <th>中文名</th>
+                    <th>日文名</th>
+                    <th>表演者</th>
+                    <th>评分</th>
+                    <th>集数</th>
+                    <th>虾米 ID</th>
+                </thead>
+                {% for i in range(0, n) %}
+                <tr>
+
+                    <td><input class="basic-input-table" name="number" /></td>
+                    <td><input class="basic-input-table" name="cn_title" /></td>
+                    <td><input class="basic-input-table" name="jp_title" /></td>
+                    <td><input class="basic-input-table" name="artist" /></td>   
+                    <td>
+                    <select class="select-input" name="rate">
+                        <option value=""></option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="1">1</option>
+                    </select>
+                    </td>  
+                    <td>
+                    <input class="basic-input-table" name="begin" />
+                    <input class="basic-input-table" name="end" />
+                    </td>
+                    <td><input class="basic-input-table" name="xiami_id" /></td>
+                </tr>
+                {% endfor %}
+            </table>
+            <input class="btn-submit" type="submit" value="保存" />
+            <span>&emsp;&emsp;</span>
+            <input class="btn-submit" type="button" value="返回" onclick="back()" />
+        </form>
+    </div>
+</div>
+{% endblock %}
+

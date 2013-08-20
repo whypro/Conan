@@ -28,13 +28,14 @@
         {% if records.count() %}
         <table>
             <thead>
-                <th>序号</th>
+                <th style="width: 26pt;">序号</th>
                 <th>中文名</th>
                 <th>日文名</th>
                 <th>表演者</th>
+                <th style="width: 60px;">评分</th>
                 <th>集数</th>
                 <th>试听</th>
-                {% if g.user.is_authenticated() %}<th></th>{% endif %}
+                {% if g.user.is_authenticated() %}<th style="width: 30pt;"></th>{% endif %}
             </thead>
             {% for record in records %}
             <tr>
@@ -42,25 +43,25 @@
                 <td>{{ record.cn_title }}</td>
                 <td>{{ record.jp_title }}</td>
                 <td>{{ record.artist }}</td>
+                {% if record.rate %}
+                <td style="{% if record.rate < 2 %}color: #712704{% elif record.rate < 3 %}color: #bd7803;{% elif record.rate < 4 %}color: #fe9d01;{% elif record.rate < 5 %}color: #ffbb1c;{% else %}color: #eed205;{% endif %}">{{ '★'*record.rate }}</td>
+                {% else %}<td>N/A</td>{% endif %}
                 <td>{% if record.begin or record.end %}{{ record.begin }}~{{ record.end }}{% else %}未知{% endif %}</td>
                 <td>
                     <span class="music">yourepitiful.mp3</span>
                     {#<embed src="http://www.xiami.com/widget/8802461_{{ record.xiami_id }}/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent"></embed>#}
                 </td>
-                {#{% if record.rate %}
-                <td style="{% if record.rate < 2 %}color: #712704{% elif record.rate < 3 %}color: #bd7803;{% elif record.rate < 4 %}color: #fe9d01;{% elif record.rate < 5 %}color: #ffbb1c;{% else %}color: #eed205;{% endif %}">{{ '★'*record.rate }}</td>
-                {% endif %}#}
                 {% if g.user.is_authenticated() %}
-                <td>{#<span><a href="{{ url_for('.modify_record', category=category, id=record._id) }}">修改</a></span><span><a href="{{ url_for('.delete_record', category=category, id=record._id) }}">删除</a></span>#}</td>
+                <td><span><a href="{{ url_for('.modify_record', category=category, id=record._id) }}">修改</a></span><br /><span><a href="{{ url_for('.delete_record', category=category, id=record._id) }}">删除</a></span></td>
                 {% endif %}
             </tr>
             {% endfor %}
         </table>
         {% endif %}
         
-        {#{% if g.user.is_authenticated() %}
-        <input class="btn-submit" type="button" value="添加" onclick="add()" />
-        {% endif %}#}
+        {% if g.user.is_authenticated() %}
+        <input class="btn-submit" type="button" value="添加" onclick="add_music()" />
+        {% endif %}
     </div>
 </div>
 {% endblock %}
