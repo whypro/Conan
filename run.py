@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 将依赖模块文件夹加入系统路径
-import sys, os, os.path
+import sys, os
 deps_path = os.path.join(os.path.split(os.path.realpath(__file__))[0],'dependency')
 sys.path.insert(0, deps_path)
 
