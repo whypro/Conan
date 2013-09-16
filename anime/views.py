@@ -1,24 +1,44 @@
 # -*- coding: utf-8 -*- 
+from __future__ import division
 from flask import render_template, request, redirect, url_for, abort, g, flash
 from anime import anime
 from bson.objectid import ObjectId
 from flask.ext.login import login_required
 from database import connect_db
 import datetime
+from math import ceil
 
 # 显示所有
 @anime.route('/', methods=['GET'])
 def index():
     return render_template('anime_index.html')
 
-@anime.route('/<category>/', methods=['GET'])
-def show_anime(category):
+@anime.route('/<category>/', defaults={'page': 1}, methods=['GET'])
+@anime.route('/<category>/page/<int:page>/', methods=['GET'])
+def show_anime(category, page):
     if category not in ('tv', 'movie'):
         abort(404)
-    db = connect_db()
-    records = db[category].find().sort([('number', 1)])
-    return render_template('show.html', records=records, category=category)
+
+    # 分页
+    records = []
+    total_pages = 0
+    records_per_page = 100
+    offset = (page - 1) * records_per_page
     
+    db = connect_db()
+    records = db[category].find().sort([('number', 1)]).skip(offset).limit(records_per_page)
+
+    total_records = records.count(with_limit_and_skip=False)
+    cur_records = records.count(with_limit_and_skip=True)
+    
+    total_pages = int(ceil(total_records / records_per_page)) # from __future__ import division
+        
+    if page != 1 and not cur_records:
+        abort(404)
+    
+    return render_template('show.html', records=records, category=category, cur_page=page, total_pages=total_pages)
+
+
 @anime.route('/<category>/add/', defaults={'n': 5}, methods=['GET', 'POST'])
 @anime.route('/<category>/add/<int:n>/', methods=['GET', 'POST'])
 @login_required
