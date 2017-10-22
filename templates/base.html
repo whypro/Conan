@@ -26,7 +26,7 @@
         <h1><a href="{{ url_for('index') }}">鳗鱼の工作室</a></h1>
         <div id="navigation">
             <ul>
-            {% if g.user.is_authenticated() %}
+            {% if g.user.is_authenticated %}
             <em>欢迎，{{ g.user.username }}</em>&emsp;|&emsp;
             {% else %}
             <em>欢迎，游客</em>&emsp;|
@@ -37,7 +37,7 @@
             {#
             <li><a href="{{ url_for('show_service') }}">服务介绍</a></li>
             <li><a href="{{ url_for('show_goods') }}">产品介绍</a></li>#}
-            {% if g.user.is_authenticated() %}
+            {% if g.user.is_authenticated %}
             <li><a href="{{ url_for('show_profile') }}">个人中心</a></li>
             <li><a href="{{ url_for('admin.index') }}">管理中心</a></li>
             <li><a href="{{ url_for('logout') }}">注销</a></li>
@@ -58,7 +58,7 @@
                 <li><img src="{{ url_for('static', filename='image/douban_16x16.png') }}" /><a href="http://www.douban.com/people/whypro/" target="_blank">豆瓣</a></li>
                 <li><img src="{{ url_for('static', filename='image/renren_16x16.png') }}" /><a href="http://www.renren.com/248007007" target="_blank">人人网</a></li>
                 <li><img src="{{ url_for('static', filename='image/weibo_16x16_gold_back.png') }}" /><a href="http://weibo.com/anchovit" target="_blank">新浪微博</a></li>
-                <li><img src="http://www.oschina.net/img/favicon.ico" style="width: 16px;" /><a href="http://my.oschina.net/apoptosis" target="_blank">开源中国</a></li>
+                <li><img src="{{ url_for('static', filename='image/oschina.png') }}" style="width: 16px;" /><a href="http://my.oschina.net/apoptosis" target="_blank">开源中国</a></li>
             </ul>
             <ul>
                 加入我们

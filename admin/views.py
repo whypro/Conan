@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*- 
 from flask import render_template, request, redirect, url_for, abort, flash, g
 from admin import admin
-from database import backup_db, restore_db, local_to_bucket, bucket_to_local
+from database import backup_db, restore_db
 
 from flask.ext.login import login_required
 from database import connect_db
 from bson.objectid import ObjectId
+
 
 # 首页
 @admin.route('/', methods=['GET'])
 @login_required
 def index():
     return render_template('admin_index.html')
+
 
 # 备份数据库
 @admin.route('/backup/', methods=['GET', 'POST'])
@@ -28,6 +30,7 @@ def backup():
     elif request.method == 'GET':
         return render_template('backup.html')
 
+
 # 恢复数据库
 @admin.route('/restore/', methods=['GET', 'POST'])
 @login_required
@@ -43,6 +46,7 @@ def restore():
     elif request.method == 'GET':
         return render_template('restore.html')
 
+
 # 
 @admin.route('/sync/', methods=['GET', 'POST'])
 @login_required
@@ -52,12 +56,13 @@ def sync():
         return render_template('flash.html', target=url_for('admin.index')) 
     else:
         if request.method == 'POST':
-            if request.form['type'] == 'local_to_bucket':
-                error = local_to_bucket()
-            elif request.form['type'] == 'bucket_to_local':
-                error = bucket_to_local()
-            else:
-                error = 1
+            # if request.form['type'] == 'local_to_bucket':
+            #     error = local_to_bucket()
+            # elif request.form['type'] == 'bucket_to_local':
+            #     error = bucket_to_local()
+            # else:
+            #     error = 1
+            error = 1
             if error:
                 flash(u'同步失败，3 秒钟内将返回管理首页……')
             else:
@@ -65,6 +70,7 @@ def sync():
             return render_template('flash.html', target=url_for('admin.index'))
         else:
             return render_template('sync.html')
+
 
 @admin.route('/user/', methods=['GET'])
 @login_required
@@ -76,7 +82,8 @@ def show_user():
         db = connect_db()
         users = db.user.find().sort([('date', -1)])
         return render_template('user.html', users=users)
-   
+
+
 @admin.route('/visit/', methods=['GET'])
 @login_required
 def show_visit():
@@ -87,7 +94,8 @@ def show_visit():
         db = connect_db()
         records = db.visit.find().sort([('date', -1)])
         return render_template('visit.html', records=records)
-         
+
+
 @admin.route('/user/delete/<id>/', methods=['GET'])
 @login_required
 def delete_user(id):
@@ -101,4 +109,3 @@ def delete_user(id):
         db = connect_db()
         db.user.remove({'_id': ObjectId(id)})
         return redirect(url_for('admin.index'))
-    

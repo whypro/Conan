@@ -35,7 +35,7 @@
                 <th style="width: 60px;">评分</th>
                 <th>集数</th>
                 <th>试听</th>
-                {% if g.user.is_authenticated() %}<th style="width: 30pt;"></th>{% endif %}
+                {% if g.user.is_authenticated %}<th style="width: 30pt;"></th>{% endif %}
             </thead>
             {% for record in records %}
             <tr>
@@ -51,7 +51,7 @@
                     <span class="music">yourepitiful.mp3</span>
                     {#<embed src="http://www.xiami.com/widget/8802461_{{ record.xiami_id }}/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent"></embed>#}
                 </td>
-                {% if g.user.is_authenticated() %}
+                {% if g.user.is_authenticated %}
                 <td><span><a href="{{ url_for('.modify_record', category=category, id=record._id) }}">修改</a></span><br /><span><a href="{{ url_for('.delete_record', category=category, id=record._id) }}">删除</a></span></td>
                 {% endif %}
             </tr>
@@ -59,7 +59,7 @@
         </table>
         {% endif %}
         
-        {% if g.user.is_authenticated() %}
+        {% if g.user.is_authenticated %}
         <input class="btn-submit" type="button" value="添加" onclick="add_music()" />
         {% endif %}
     </div>

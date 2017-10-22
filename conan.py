@@ -22,6 +22,7 @@ from captcha import create_captcha
 from math import ceil
 from urllib import urlencode
 
+
 # 应用程序工厂函数
 def create_app(config):
     app = Flask(__name__)
@@ -32,9 +33,11 @@ def create_app(config):
     configure_flasklogin(app)
     return app
 
+
 # 配置应用程序
 def configure_app(app, config):
     app.config.from_object(config)
+
 
 # 配置视图
 def configure_views(app):
@@ -51,7 +54,7 @@ def configure_views(app):
     @app.route('/login/', methods=['GET', 'POST'])
     def login():
         next = get_redirect_target()
-        if g.user.is_authenticated():
+        if g.user.is_authenticated:
             return redirect(url_for('index'))
         error = None
         if request.method == 'POST':
@@ -83,7 +86,7 @@ def configure_views(app):
     @app.route('/register/', methods=['GET', 'POST'])
     def register():
         # 已登录用户则返回首页
-        if g.user.is_authenticated():
+        if g.user.is_authenticated:
             return redirect(url_for('index'))
         error = None
         if request.method == 'POST':
@@ -152,7 +155,7 @@ def configure_views(app):
         db.add_son_manipulator(NamespaceInjector())
         db.add_son_manipulator(AutoReference(db))
 
-        if not g.user.is_authenticated():
+        if not g.user.is_authenticated:
             # 若未登录，则显示 visible 为 public 的留言
             messages = db.message.find({'visible': 'public'}).sort([('date', -1)]).skip(offset).limit(messages_per_page)
         elif g.user.is_admin():
@@ -184,7 +187,7 @@ def configure_views(app):
             elif request.form['captcha'].upper() != session['captcha'].upper():
                 error = u'验证码不正确'
             else:
-                id = g.user.get_id() if g.user.is_authenticated() else None
+                id = g.user.get_id() if g.user.is_authenticated else None
 
                 db = connect_db()
                 # ip = request.headers.get('x-forwarded-for', request.remote_addr)
@@ -245,7 +248,7 @@ def configure_views(app):
             elif request.form['captcha'].upper() != session['captcha'].upper():
                 error = u'验证码不正确'
             else:
-                uid = g.user.get_id() if g.user.is_authenticated() else None
+                uid = g.user.get_id() if g.user.is_authenticated else None
                 db = connect_db()
                 # ip = request.headers.get('x-forwarded-for', request.remote_addr)
                 if 'x-forwarded-for' in request.headers:
@@ -275,7 +278,6 @@ def configure_views(app):
             # flash(u'删除成功，3 秒钟内将返回留言页面……')
             # return render_template('flash.html', target=url_for('show_message'))
             return redirect(url_for('show_message'))
-
 
     # 个人信息页面
     @app.route('/profile/', methods=['GET', 'POST'])
@@ -359,7 +361,8 @@ def configure_views(app):
         if not target or not is_safe_url(target):
             target = url_for(endpoint, **values)
         return render_template('flash.html', target=target)
-        
+
+
 def configure_blueprints(app):
     from anime import anime
     app.register_blueprint(anime, url_prefix='/anime')
@@ -367,6 +370,7 @@ def configure_blueprints(app):
     app.register_blueprint(music, url_prefix='/music')
     from admin import admin
     app.register_blueprint(admin, url_prefix='/admin')
+
 
 def configure_flasklogin(app):
     login_manager = LoginManager()
@@ -383,6 +387,7 @@ def configure_flasklogin(app):
     def unauthorized():
         flash(u'请先登录，3 秒钟内将转到登录页面……')
         return render_template('flash.html', target=url_for('login'))
+
 
 def config_before_request(app):
     @app.before_request

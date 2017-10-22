@@ -16,7 +16,7 @@
                 <th>日文名</th>
                 <th style="width: 90px;">上映日期</th>
                 <th>评分</th>
-                {% if g.user.is_authenticated() %}<th></th>{% endif %}
+                {% if g.user.is_authenticated %}<th></th>{% endif %}
             </thead>
             {% for record in records %}
             <tr>
@@ -27,7 +27,7 @@
                 {% if record.rate %}
                 <td style="{% if record.rate < 2 %}color: #712704{% elif record.rate < 3 %}color: #bd7803;{% elif record.rate < 4 %}color: #fe9d01;{% elif record.rate < 5 %}color: #ffbb1c;{% else %}color: #eed205;{% endif %}">{{ '★'*record.rate }}</td>
                 {% else %}<td>N/A</td>{% endif %}
-                {% if g.user.is_authenticated() %}
+                {% if g.user.is_authenticated %}
                 <td><span><a href="{{ url_for('.modify_record', category=category, id=record._id) }}">修改</a></span><br /><span><a href="{{ url_for('.delete_record', category=category, id=record._id) }}">删除</a></span></td>
                 {% endif %}
             </tr>
@@ -49,7 +49,7 @@
 			<a href="{{ url_for('.show_anime', category=category, page=cur_page+1) }}">下一页</a>
 			{% endif %}
 		</div>
-        {% if g.user.is_authenticated() %}
+        {% if g.user.is_authenticated %}
         <input class="btn-submit" type="button" value="添加" onclick="add('{{ category }}')" />
         {% endif %}
     </div>
